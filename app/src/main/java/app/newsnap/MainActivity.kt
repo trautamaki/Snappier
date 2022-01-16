@@ -20,6 +20,7 @@ import java.util.concurrent.Executors
 class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var mViewFinder: ViewFinder? = null
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         // Request camera permissions
         if (allPermissionsGranted()) {
+            mViewFinder = ViewFinder(this, viewFinder)
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
@@ -79,42 +81,13 @@ class MainActivity : AppCompatActivity() {
 
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder()
-                    .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(viewFinder.surfaceProvider)
-                    }
 
             try {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
-                // Bind use cases to camera
-                val camera = cameraProvider.bindToLifecycle(
-                        this, lensFacing, preview)
-
-                viewFinder.setOnTouchListener(View.OnTouchListener setOnTouchListener@{ view: View, motionEvent: MotionEvent ->
-                    when (motionEvent.action) {
-                        MotionEvent.ACTION_DOWN -> return@setOnTouchListener true
-                        MotionEvent.ACTION_UP -> {
-                            // Get the MeteringPointFactory from viewFinder
-                            val factory = viewFinder.meteringPointFactory
-
-                            // Get touch point
-                            val point = factory.createPoint(motionEvent.x, motionEvent.y)
-
-                            // Create a MeteringAction
-                            val action = FocusMeteringAction.Builder(point).build()
-
-                            // Start metering
-                            camera.cameraControl.startFocusAndMetering(action)
-
-                            return@setOnTouchListener true
-                        }
-                        else -> return@setOnTouchListener false
-                    }
-                })
+                // Build viewfinder
+                mViewFinder?.build(cameraProvider, lensFacing);
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
