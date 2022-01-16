@@ -1,5 +1,7 @@
 package app.newsnap
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.view.MotionEvent
 import android.view.View
 import androidx.camera.core.*
@@ -34,7 +36,7 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
 
                 // Get touch point
                 val point = factory.createPoint(motionEvent.x, motionEvent.y)
-
+                showFocusRing(motionEvent.x, motionEvent.y)
                 // Create a MeteringAction
                 val action = FocusMeteringAction.Builder(point).build()
 
@@ -44,5 +46,39 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
             }
             else -> return false
         }
+    }
+
+    private fun showFocusRing(x: Float, y: Float) {
+        //Get the focus ring
+        val focusRing = activity.focusRing
+
+        //Show the focus ring on touch position
+        val width = focusRing.width.toFloat()
+        focusRing.x = x - width / 2
+        focusRing.y = y + previewView.y - width / 2
+        focusRing.visibility = View.VISIBLE
+        focusRing.alpha = 1f
+
+        //Animate fade out
+        focusRing.animate()
+            .setStartDelay(350)
+            .setDuration(350)
+            .alpha(0f)
+            .setListener(object : AnimatorListenerAdapter() {
+
+                var isCancelled = false
+
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    if (!isCancelled)
+                        focusRing.visibility = View.INVISIBLE
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                    super.onAnimationCancel(animation)
+                    isCancelled = true
+                }
+            })
+            .start()
     }
 }
