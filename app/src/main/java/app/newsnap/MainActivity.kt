@@ -5,12 +5,11 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -92,8 +91,30 @@ class MainActivity : AppCompatActivity() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                val camera = cameraProvider.bindToLifecycle(
                         this, lensFacing, preview)
+
+                viewFinder.setOnTouchListener(View.OnTouchListener setOnTouchListener@{ view: View, motionEvent: MotionEvent ->
+                    when (motionEvent.action) {
+                        MotionEvent.ACTION_DOWN -> return@setOnTouchListener true
+                        MotionEvent.ACTION_UP -> {
+                            // Get the MeteringPointFactory from viewFinder
+                            val factory = viewFinder.meteringPointFactory
+
+                            // Get touch point
+                            val point = factory.createPoint(motionEvent.x, motionEvent.y)
+
+                            // Create a MeteringAction
+                            val action = FocusMeteringAction.Builder(point).build()
+
+                            // Start metering
+                            camera.cameraControl.startFocusAndMetering(action)
+
+                            return@setOnTouchListener true
+                        }
+                        else -> return@setOnTouchListener false
+                    }
+                })
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
