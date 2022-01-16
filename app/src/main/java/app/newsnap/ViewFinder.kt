@@ -7,7 +7,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class ViewFinder(private val activity: MainActivity, private val viewFinder: PreviewView) :
+class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) :
     View.OnTouchListener {
 
     private var camera: Camera? = null
@@ -17,12 +17,12 @@ class ViewFinder(private val activity: MainActivity, private val viewFinder: Pre
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .build()
             .also {
-                it.setSurfaceProvider(viewFinder.surfaceProvider)
+                it.setSurfaceProvider(previewView.surfaceProvider)
             }
         camera = cameraProvider.bindToLifecycle(
             activity, cameraSelector, preview
         )
-        viewFinder.setOnTouchListener(this)
+        previewView.setOnTouchListener(this)
     }
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
@@ -30,7 +30,7 @@ class ViewFinder(private val activity: MainActivity, private val viewFinder: Pre
             MotionEvent.ACTION_DOWN -> return true
             MotionEvent.ACTION_UP -> {
                 // Get the MeteringPointFactory from viewFinder
-                val factory = viewFinder.meteringPointFactory
+                val factory = previewView.meteringPointFactory
 
                 // Get touch point
                 val point = factory.createPoint(motionEvent.x, motionEvent.y)

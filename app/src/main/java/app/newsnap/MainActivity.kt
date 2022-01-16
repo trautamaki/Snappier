@@ -20,7 +20,7 @@ import java.util.concurrent.Executors
 class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private var mViewFinder: ViewFinder? = null
+    private var viewFinder: ViewFinder? = null
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         // Request camera permissions
         if (allPermissionsGranted()) {
-            mViewFinder = ViewFinder(this, viewFinder)
+            viewFinder = ViewFinder(this, previewView)
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                 cameraProvider.unbindAll()
 
                 // Build viewfinder
-                mViewFinder?.build(cameraProvider, lensFacing);
+                viewFinder?.build(cameraProvider, lensFacing);
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
