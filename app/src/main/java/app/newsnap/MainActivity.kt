@@ -66,8 +66,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun swapCamera() {
         lensFacing = if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
+            camera_swap_button.setImageResource(R.drawable.ic_camera_front)
             CameraSelector.DEFAULT_BACK_CAMERA
         } else {
+            camera_swap_button.setImageResource(R.drawable.ic_camera_rear)
             CameraSelector.DEFAULT_FRONT_CAMERA
         }
 
