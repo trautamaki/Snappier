@@ -19,6 +19,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
+    private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set up the listener for take photo button
         camera_capture_button.setOnClickListener { takePhoto() }
+        camera_swap_button.setOnClickListener { swapCamera() }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -62,6 +64,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun takePhoto() {}
 
+    private fun swapCamera() {
+        lensFacing = if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
+            CameraSelector.DEFAULT_BACK_CAMERA
+        } else {
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        }
+
+        startCamera()
+    }
+
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -74,16 +86,13 @@ class MainActivity : AppCompatActivity() {
                         it.setSurfaceProvider(viewFinder.surfaceProvider)
                     }
 
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             try {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                        this, cameraSelector, preview)
+                        this, lensFacing, preview)
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
