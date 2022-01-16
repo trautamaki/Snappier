@@ -7,6 +7,7 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -79,8 +80,8 @@ class MainActivity : AppCompatActivity() {
 
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
             val preview = Preview.Builder()
+                    .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                     .build()
                     .also {
                         it.setSurfaceProvider(viewFinder.surfaceProvider)
