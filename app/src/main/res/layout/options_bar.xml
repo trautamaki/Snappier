@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/options_bar_height"
+    android:padding="@dimen/options_bar_padding"
+    android:gravity="center_horizontal"
+    android:background="@color/activity_bg">
+
+    <app.newsnap.ui.FlashButton
+        android:id="@+id/button_flash_toggle"
+        android:src="@drawable/ic_flash_off"
+        style="@style/Theme.NewSnap.ImageButton"/>
+
+    <ImageButton
+        android:id="@+id/button_settings"
+        android:src="@drawable/ic_settings"
+        style="@style/Theme.NewSnap.ImageButton"/>
+</LinearLayout>

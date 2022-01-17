@@ -6,12 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    
+    <app.newsnap.ui.OptionsBar
+        android:id="@+id/options_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="1dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/camera_capture_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="@dimen/camera_controls_bottom_margin"
         android:src="@drawable/capture_ring"
         app:tint="@color/icon_tint"
         app:fabCustomSize="60dp"
@@ -24,7 +31,7 @@
         android:id="@+id/camera_swap_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="@dimen/camera_controls_bottom_margin"
         android:layout_marginEnd="30dp"
         android:src="@drawable/ic_camera_front"
         app:tint="@color/icon_tint"

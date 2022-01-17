@@ -11,4 +11,10 @@
         <item name="colorSecondary">@color/accent</item>
         <item name="android:windowBackground">@color/activity_bg</item>
     </style>
+
+    <style name="Theme.NewSnap.ImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">@dimen/options_bar_button_size</item>
+        <item name="android:layout_height">@dimen/options_bar_button_size</item>
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+    </style>
 </resources>

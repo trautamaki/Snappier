@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="camera_controls_bottom_margin">30dp</dimen>
+    <dimen name="options_bar_button_size">50dp</dimen>
+    <dimen name="options_bar_padding">6dp</dimen>
+    <!-- @dimen/options_bar_button_size + @dimen/options_bar_padding -->
+    <dimen name="options_bar_height">60dp</dimen>
+</resources>

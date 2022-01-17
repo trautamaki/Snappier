@@ -7,15 +7,18 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import app.newsnap.ui.FlashButton
+import app.newsnap.ui.OptionsBar.IOptionsBar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IOptionsBar {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var viewFinder: ViewFinder? = null
@@ -25,6 +28,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        options_bar.setOptionsBarListener(this);
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -106,5 +111,9 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val SAVEFILE_LOCATION = Environment.DIRECTORY_DCIM
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+    }
+
+    override fun onFlashToggled(flashMode: FlashButton.FlashMode) {
+        // TODO
     }
 }
