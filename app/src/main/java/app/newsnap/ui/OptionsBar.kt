@@ -16,7 +16,7 @@ class OptionsBar @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyle, defStyleRes), View.OnClickListener {
 
     interface IOptionsBar {
-        fun onFlashToggled(flashMode: FlashButton.FlashMode)
+        fun onFlashToggled(flashMode: Int)
         fun onOptionsBarClick()
     }
 
@@ -36,8 +36,8 @@ class OptionsBar @JvmOverloads constructor(
     override fun onClick(v: View?) {
         listener?.onOptionsBarClick()
         if (v == button_flash_toggle) {
-            listener?.onFlashToggled(button_flash_toggle.getFlashMode())
             button_flash_toggle.toggleMode()
+            listener?.onFlashToggled(button_flash_toggle.getFlashMode())
         }
     }
 }

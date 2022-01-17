@@ -14,7 +14,6 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import app.newsnap.ui.FlashButton
 import app.newsnap.ui.OptionsBar.IOptionsBar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -26,8 +25,8 @@ import java.util.concurrent.Executors
 class MainActivity : AppCompatActivity(), IOptionsBar {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private lateinit var viewFinder: ViewFinder
 
+    private lateinit var viewFinder: ViewFinder
     private lateinit var cameraExecutor: ExecutorService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,18 +95,19 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
         // Set up image capture listener, which is triggered after photo has
         // been taken
         imageCapture.takePicture(
-                outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
-            override fun onError(exc: ImageCaptureException) {
-                Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-            }
+                outputOptions, ContextCompat.getMainExecutor(this),
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onError(exc: ImageCaptureException) {
+                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    }
 
-            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                val savedUri = Uri.fromFile(photoFile)
-                val msg = "Photo capture succeeded: $savedUri"
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                Log.d(TAG, msg)
-            }
-        })
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                        val savedUri = Uri.fromFile(photoFile)
+                        val msg = "Photo capture succeeded: $savedUri"
+                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                        Log.d(TAG, msg)
+                    }
+                })
     }
 
     private fun swapCamera() {
@@ -157,8 +157,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 
-    override fun onFlashToggled(flashMode: FlashButton.FlashMode) {
-        // TODO
+    override fun onFlashToggled(flashMode: Int) {
+        imageCapture?.flashMode = flashMode
     }
 
     override fun onOptionsBarClick() {
