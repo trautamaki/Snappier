@@ -2,6 +2,7 @@
 <resources>
     <color name="accent">#FF03DAC5</color>
     <color name="icon_tint">@android:color/black</color>
+    <color name="secondary_icon_tint">#E0E0E0</color>
     <color name="purple_500">#FF6200EE</color>
     <!-- material_blue_grey_900 -->
     <color name="activity_bg">#ff263238</color>
