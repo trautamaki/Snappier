@@ -17,6 +17,7 @@ class OptionsBar @JvmOverloads constructor(
 
     interface IOptionsBar {
         fun onFlashToggled(flashMode: FlashButton.FlashMode)
+        fun onOptionsBarClick()
     }
 
     var listener: IOptionsBar? = null
@@ -33,6 +34,7 @@ class OptionsBar @JvmOverloads constructor(
     }
 
     override fun onClick(v: View?) {
+        listener?.onOptionsBarClick()
         if (v == button_flash_toggle) {
             listener?.onFlashToggled(button_flash_toggle.getFlashMode())
             button_flash_toggle.toggleMode()

@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 class MainActivity : AppCompatActivity(), IOptionsBar {
     private var imageCapture: ImageCapture? = null
     private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private var viewFinder: ViewFinder? = null
+    private lateinit var viewFinder: ViewFinder
 
     private lateinit var cameraExecutor: ExecutorService
 
@@ -67,7 +67,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
         }
     }
 
-    private fun takePhoto() {}
+    private fun takePhoto() {
+        viewFinder.unFadeControls()
+    }
 
     private fun swapCamera() {
         lensFacing = if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
                 cameraProvider.unbindAll()
 
                 // Build viewfinder
-                viewFinder?.build(cameraProvider, lensFacing);
+                viewFinder.build(cameraProvider, lensFacing);
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -115,5 +117,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
 
     override fun onFlashToggled(flashMode: FlashButton.FlashMode) {
         // TODO
+    }
+
+    override fun onOptionsBarClick() {
+        viewFinder.unFadeControls()
     }
 }
