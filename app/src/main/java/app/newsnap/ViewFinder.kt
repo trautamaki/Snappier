@@ -14,7 +14,8 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
 
     private var camera: Camera? = null
 
-    fun build(cameraProvider: ProcessCameraProvider, cameraSelector: CameraSelector) {
+    fun build(cameraProvider: ProcessCameraProvider, cameraSelector: CameraSelector,
+              imageCapture: ImageCapture) {
         val preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .build()
@@ -22,7 +23,7 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
                 it.setSurfaceProvider(previewView.surfaceProvider)
             }
         camera = cameraProvider.bindToLifecycle(
-            activity, cameraSelector, preview
+            activity, cameraSelector, preview, imageCapture
         )
         previewView.setOnTouchListener(this)
     }
