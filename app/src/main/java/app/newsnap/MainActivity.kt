@@ -150,10 +150,10 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
     }
 
     companion object {
-        private const val TAG = "NewSnap"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        const val TAG = "NewSnap"
+        const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val SAVEFILE_LOCATION = Environment.DIRECTORY_DCIM
+        val SAVEFILE_LOCATION = Environment.DIRECTORY_DCIM
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 
