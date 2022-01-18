@@ -12,19 +12,21 @@ import kotlinx.android.synthetic.main.activity_main.*
 class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) :
     View.OnTouchListener {
 
-    private var camera: Camera? = null
+    var camera: Camera? = null
 
-    fun build(cameraProvider: ProcessCameraProvider, cameraSelector: CameraSelector,
-              imageCapture: ImageCapture) {
-        val preview = Preview.Builder()
+    lateinit var preview: Preview
+
+    init {
+        build()
+    }
+
+    private fun build() {
+        preview = Preview.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .build()
             .also {
                 it.setSurfaceProvider(previewView.surfaceProvider)
             }
-        camera = cameraProvider.bindToLifecycle(
-            activity, cameraSelector, preview, imageCapture
-        )
         previewView.setOnTouchListener(this)
     }
 
