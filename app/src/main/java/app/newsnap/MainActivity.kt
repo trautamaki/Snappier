@@ -1,6 +1,7 @@
 package app.newsnap
 
 import android.Manifest
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -8,34 +9,42 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import app.newsnap.capturer.ImageCapturer
 import app.newsnap.ui.OptionsBar.IOptionsBar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MainActivity : AppCompatActivity(), IOptionsBar {
+class MainActivity : AppCompatActivity(), IOptionsBar,
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
     private lateinit var viewFinder: ViewFinder
     private lateinit var imageCapturer: ImageCapturer
     private lateinit var cameraExecutor: ExecutorService
 
+    private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        options_bar.setOptionsBarListener(this);
+        options_bar.setOptionsBarListener(this)
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                    this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                    this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+            )
         }
 
         // Set up the listener for take photo button
@@ -88,7 +97,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            imageCapturer = ImageCapturer(this)
+            imageCapturer = ImageCapturer(this, captureMode)
 
             try {
                 // Unbind use cases before rebinding
@@ -129,5 +138,12 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
 
     override fun onOptionsBarClick() {
         viewFinder.unFadeControls()
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        if (key == Configuration.KEY_CAPTURE_MODE) {
+            captureMode = sharedPreferences.getString(key, "0")!!.toInt()
+            startCamera()
+        }
     }
 }

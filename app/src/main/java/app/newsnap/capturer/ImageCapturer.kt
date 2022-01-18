@@ -12,15 +12,15 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ImageCapturer(private val activity: MainActivity) : ImageCapture.OnImageSavedCallback {
-
+class ImageCapturer(private val activity: MainActivity, captureMode: Int) :
+    ImageCapture.OnImageSavedCallback {
     lateinit var imageCapture: ImageCapture
         private set
     private var lastPhotoFile: File? = null
     private var outputDirectory: File
 
     init {
-        build()
+        build(captureMode)
 
         // Set output directory
         val mediaDir = activity.externalMediaDirs.firstOrNull()?.let {
@@ -30,8 +30,9 @@ class ImageCapturer(private val activity: MainActivity) : ImageCapture.OnImageSa
             mediaDir else activity.filesDir
     }
 
-    private fun build() {
+    private fun build(captureMode: Int) {
         imageCapture = ImageCapture.Builder()
+            .setCaptureMode(captureMode)
             .build()
     }
 
