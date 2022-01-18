@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Settings defaults -->
+    <integer name="default_aspect_ratio">0</integer>
+    <integer name="default_capture_mode">0</integer>
+</resources>

@@ -8,6 +8,10 @@ import android.widget.LinearLayout
 import app.newsnap.R
 import kotlinx.android.synthetic.main.options_bar.view.*
 
+import app.newsnap.SettingsActivity
+
+import android.content.Intent
+
 class OptionsBar @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
@@ -27,6 +31,7 @@ class OptionsBar @JvmOverloads constructor(
                 .inflate(R.layout.options_bar, this, true)
 
         button_flash_toggle.setOnClickListener(this)
+        button_settings.setOnClickListener(this)
     }
 
     fun setOptionsBarListener(listener: IOptionsBar) {
@@ -38,6 +43,8 @@ class OptionsBar @JvmOverloads constructor(
         if (v == button_flash_toggle) {
             button_flash_toggle.toggleMode()
             listener?.onFlashToggled(button_flash_toggle.getFlashMode())
+        } else if (v == button_settings) {
+            context.startActivity(Intent(context, SettingsActivity::class.java))
         }
     }
 }
