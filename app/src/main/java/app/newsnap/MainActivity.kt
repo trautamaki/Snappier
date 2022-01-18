@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
 
         // Request camera permissions
         if (allPermissionsGranted()) {
-            viewFinder = ViewFinder(this, previewView)
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
@@ -96,7 +95,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar {
                 cameraProvider.unbindAll()
 
                 // Build viewfinder
-                viewFinder.build(cameraProvider, lensFacing, imageCapturer.imageCapture);
+                viewFinder = ViewFinder(this, previewView)
+
+                // Bind use cases to camera
+                val camera = cameraProvider.bindToLifecycle(
+                    this, lensFacing, viewFinder.preview, imageCapturer.imageCapture
+                )
+
+                viewFinder.camera = camera
 
             } catch (exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
