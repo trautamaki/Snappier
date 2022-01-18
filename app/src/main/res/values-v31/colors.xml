@@ -2,6 +2,7 @@
 <resources>
     <!-- System accent -->
     <color name="accent">@android:color/system_accent1_100</color>
+    <color name="color_primary">@android:color/system_neutral2_600</color>
     <color name="icon_tint">@android:color/system_accent3_900</color>
     <color name="secondary_icon_tint">@android:color/system_neutral2_100</color>
     <!-- primary_device_default_settings -->

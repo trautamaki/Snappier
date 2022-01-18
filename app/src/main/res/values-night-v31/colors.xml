@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- primary_device_default_settings -->
+    <color name="activity_settings_bg">@android:color/system_neutral1_900</color>
+    <color name="color_primary">@android:color/system_neutral2_100</color>
+</resources>

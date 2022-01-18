@@ -1,15 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.NewSnap" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+    <style name="Theme.NewSnap.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/color_primary</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="android:windowBackground">@color/activity_bg</item>
     </style>
 
-    <style name="Theme.NewSnap.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
+    <style name="Theme.NewSnap.Settings" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/color_primary</item>
         <item name="colorSecondary">@color/accent</item>
-        <item name="android:windowBackground">@color/activity_bg</item>
+        <item name="android:windowBackground">@color/activity_settings_bg</item>
     </style>
 
     <style name="Theme.NewSnap.ImageButton" parent="Widget.AppCompat.ImageButton">
