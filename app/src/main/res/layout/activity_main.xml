@@ -15,6 +15,21 @@
         app:layout_constraintTop_toTopOf="parent"
         android:elevation="2dp"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/camera_swap_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/camera_controls_bottom_margin"
+        android:layout_marginStart="30dp"
+        android:src="@drawable/ic_camera_front"
+        android:backgroundTint="@color/secondary_icon_tint"
+        app:tint="@color/icon_tint"
+        app:borderWidth="0dp"
+        app:fabCustomSize="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tab_layout"
+        app:maxImageSize="24dp"/>
+
     <org.snappier.camera.ui.CaptureButton
         android:id="@+id/camera_capture_button"
         android:layout_width="wrap_content"
@@ -30,20 +45,19 @@
         app:layout_constraintBottom_toTopOf="@id/tab_layout"
         app:maxImageSize="70dp"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/camera_swap_button"
+    <org.snappier.camera.ui.GalleryButton
+        android:id="@+id/gallery_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/camera_controls_bottom_margin"
         android:layout_marginEnd="30dp"
-        android:src="@drawable/ic_camera_front"
         android:backgroundTint="@color/secondary_icon_tint"
-        app:tint="@color/icon_tint"
+        android:scaleType="fitCenter"
         app:borderWidth="0dp"
         app:fabCustomSize="50dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tab_layout"
-        app:maxImageSize="24dp"/>
+        app:maxImageSize="50dp"/>
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
