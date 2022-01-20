@@ -4,8 +4,10 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.view.MotionEvent
 import android.view.View
-import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -15,6 +17,13 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     var camera: Camera? = null
 
     lateinit var preview: Preview
+
+    private val viewsToFade = hashMapOf(
+            activity.options_bar to 0.3f,
+            activity.camera_capture_button to 0.5f,
+            activity.camera_swap_button to 0.3f,
+            activity.tab_layout to 0.5f
+    )
 
     init {
         build()
@@ -92,32 +101,20 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
             return
         }
 
-        activity.options_bar.animate()
-                .setDuration(350)
-                .alpha(0.3f)
-                .start()
-        activity.camera_capture_button.animate()
-                .setDuration(350)
-                .alpha(0.5f)
-                .start()
-        activity.camera_swap_button.animate()
-                .setDuration(350)
-                .alpha(0.3f)
-                .start()
+        for ((key, value) in viewsToFade) {
+            key.animate()
+                    .setDuration(350)
+                    .alpha(value)
+                    .start()
+        }
     }
 
     fun unFadeControls() {
-        activity.options_bar.animate()
-                .setDuration(250)
-                .alpha(1f)
-                .start()
-        activity.camera_capture_button.animate()
-                .setDuration(250)
-                .alpha(1f)
-                .start()
-        activity.camera_swap_button.animate()
-                .setDuration(250)
-                .alpha(1f)
-                .start()
+        for ((key, _) in viewsToFade) {
+            key.animate()
+                    .setDuration(250)
+                    .alpha(1.0f)
+                    .start()
+        }
     }
 }

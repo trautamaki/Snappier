@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val cameraModes = resources.getStringArray(R.array.camera_modes)
+        cameraModes.forEach { tab_layout.addTab(tab_layout.newTab().setText(it)) }
+
         options_bar.setOptionsBarListener(this)
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
