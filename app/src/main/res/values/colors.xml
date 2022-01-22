@@ -7,4 +7,5 @@
     <!-- material_blue_grey_900 -->
     <color name="activity_bg">#ff263238</color>
     <color name="activity_settings_bg">@android:color/white</color>
+    <color name="capture_button_capturing">#FF0000</color>
 </resources>
