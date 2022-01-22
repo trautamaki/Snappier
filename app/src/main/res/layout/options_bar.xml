@@ -16,4 +16,9 @@
         android:id="@+id/button_settings"
         android:src="@drawable/ic_settings"
         style="@style/Theme.NewSnap.ImageButton"/>
+
+    <app.newsnap.ui.AspectButton
+        android:id="@+id/button_aspect_ratio"
+        android:src="@drawable/ic_3_4"
+        style="@style/Theme.NewSnap.ImageButton"/>
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private lateinit var cameraExecutor: ExecutorService
 
     private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
+    private var aspectRatio: Int = Configuration.DEFAULT_ASPECT_RATIO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,14 +99,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            imageCapturer = ImageCapturer(this, captureMode)
+            imageCapturer = ImageCapturer(this, captureMode, aspectRatio)
 
             try {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
                 // Build viewfinder
-                viewFinder = ViewFinder(this, previewView)
+                viewFinder = ViewFinder(this, preview_view, aspectRatio)
 
                 // Bind use cases to camera
                 val camera = cameraProvider.bindToLifecycle(
@@ -138,6 +140,11 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     override fun onOptionsBarClick() {
         viewFinder.unFadeControls()
+    }
+
+    override fun onAspectRatioChanged(aspectRatio: Int) {
+        this.aspectRatio = aspectRatio
+        startCamera()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
