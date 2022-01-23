@@ -32,7 +32,7 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
                 .build()
     }
 
-    @SuppressLint("RestrictedApi")
+    @SuppressLint("RestrictedApi", "MissingPermission")
     fun startVideo() {
         // Create time-stamped output file to hold the image
         lastFile = createFile(outputDirectory, fileNameFormat, ".mp4")

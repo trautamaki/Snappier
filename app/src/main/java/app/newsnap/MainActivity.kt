@@ -14,6 +14,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import app.newsnap.camera.PhotoCamera
+import app.newsnap.camera.VideoCamera
 import app.newsnap.capturer.ImageCapturer
 import app.newsnap.capturer.VideoCapturer
 import app.newsnap.ui.OptionsBar.IOptionsBar
@@ -24,20 +26,31 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener {
-    private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private var lensFacing2: Int = CameraSelector.LENS_FACING_BACK
 
     private lateinit var viewFinder: ViewFinder
-    private lateinit var imageCapturer: ImageCapturer
-    private lateinit var videoCapturer: VideoCapturer
-    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var photoCamera: PhotoCamera
+    private lateinit var videoCamera: VideoCamera
+    private lateinit var activeCamera: app.newsnap.camera.Camera
 
     private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
     private var cameraMode: Int = 0
 
+    private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // TODO: try?
+        // Build viewfinder
+        viewFinder = ViewFinder(this, previewView)
+
+        // Initialize supported camera modes
+        // TODO: find all supported modes
+        photoCamera = PhotoCamera(this, viewFinder)
+        videoCamera = VideoCamera(this, viewFinder)
+
+        activeCamera = photoCamera
 
         val cameraModes = resources.getStringArray(R.array.camera_modes)
         cameraModes.forEach { tab_layout.addTab(tab_layout.newTab().setText(it)) }
@@ -49,7 +62,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         // Request camera permissions
         if (allPermissionsGranted()) {
-            startPhotoCamera()
+            activeCamera.startCamera()
         } else {
             ActivityCompat.requestPermissions(
                     this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
@@ -59,8 +72,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         // Set up the listener for take photo button
         camera_capture_button.setOnClickListener { capture() }
         camera_swap_button.setOnClickListener { swapCamera() }
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     override fun onDestroy() {
@@ -74,7 +85,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startPhotoCamera()
+                activeCamera.startCamera()
             } else {
                 Toast.makeText(this, getString(R.string.permissions_not_granted),
                         Toast.LENGTH_SHORT).show()
@@ -86,96 +97,35 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private fun capture() {
         viewFinder.unFadeControls()
 
-        if (cameraMode == 0) {
-            imageCapturer.takePhoto()
-        } else {
-            if (videoCapturer.recording) {
-                videoCapturer.stopVideo()
+        if (activeCamera.cameraModeId == 0) {
+            photoCamera.takePhoto()
+        } else if (activeCamera.cameraModeId == 1) {
+            if (videoCamera.recording) {
+                videoCamera.stopVideo()
                 camera_capture_button.backgroundTintList =
                         ColorStateList.valueOf(resources.getColor(R.color.accent))
             } else {
                 camera_capture_button.backgroundTintList =
                         ColorStateList.valueOf(resources.getColor(R.color.capture_button_capturing))
-                videoCapturer.startVideo()
+                videoCamera.startVideo()
             }
         }
     }
 
     private fun swapCamera() {
-        lensFacing = if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
+        if (activeCamera.lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
             camera_swap_button.setImageResource(R.drawable.ic_camera_front)
-            lensFacing2 = CameraSelector.LENS_FACING_BACK
-            CameraSelector.DEFAULT_BACK_CAMERA
+            videoCamera.lensFacingVideo = CameraSelector.LENS_FACING_BACK
+            videoCamera.lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
+            photoCamera.lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
         } else {
             camera_swap_button.setImageResource(R.drawable.ic_camera_rear)
-            lensFacing2 = CameraSelector.LENS_FACING_FRONT
-            CameraSelector.DEFAULT_FRONT_CAMERA
+            videoCamera.lensFacingVideo = CameraSelector.LENS_FACING_FRONT
+            videoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
+            photoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
         }
 
-        startCamera()
-    }
-
-    private fun startPhotoCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            imageCapturer = ImageCapturer(this, captureMode)
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Build viewfinder
-                viewFinder = ViewFinder(this, previewView)
-
-                // Bind use cases to camera
-                val camera = cameraProvider.bindToLifecycle(
-                    this, lensFacing, viewFinder.preview, imageCapturer.imageCapture
-                )
-
-                viewFinder.camera = camera
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun startVideoCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            videoCapturer = VideoCapturer(this, lensFacing2)
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Build viewfinder
-                viewFinder = ViewFinder(this, previewView)
-
-                // Bind use cases to camera
-                val camera = cameraProvider.bindToLifecycle(
-                        this, lensFacing, viewFinder.preview, videoCapturer.videoCapture
-                )
-
-                viewFinder.camera = camera
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun startCamera() {
-        when (cameraMode) {
-            0 -> startPhotoCamera()
-            1 -> startVideoCamera()
-        }
+        activeCamera.startCamera()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -184,7 +134,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onFlashToggled(flashMode: Int) {
-        imageCapturer.imageCapture.flashMode = flashMode
+        photoCamera.imageCapturer.imageCapture.flashMode = flashMode
     }
 
     override fun onOptionsBarClick() {
@@ -193,28 +143,34 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         if (key == Configuration.KEY_CAPTURE_MODE) {
-            captureMode = sharedPreferences.getString(key, "0")!!.toInt()
-            startCamera()
+            photoCamera.handleCaptureModeChange(sharedPreferences.getString(key, "0")!!.toInt())
+            if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
+                activeCamera.startCamera()
+            }
         }
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        if (cameraMode == tab?.position) {
+        if (activeCamera.cameraModeId == tab?.position) {
             return
         }
 
-        when (tab?.position) {
+        activeCamera = when (tab?.position) {
             0 -> {
                 Log.d(TAG, "Switch to photo mode")
-                cameraMode = 0
-                startPhotoCamera()
+                photoCamera
             }
             1 -> {
                 Log.d(TAG, "Switch to video mode")
-                cameraMode = 1
-                startVideoCamera()
+                videoCamera
+            }
+            else -> {
+                Log.e(TAG, "Unknown tab. Using photo camera.")
+                videoCamera
             }
         }
+
+        activeCamera.startCamera()
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
