@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import app.newsnap.MainActivity
 import app.newsnap.ViewFinder
 import app.newsnap.capturer.ImageCapturer
+import kotlinx.android.synthetic.main.activity_main.*
 
 class PhotoCamera(
         private val activity: MainActivity, private val viewFinder: ViewFinder
@@ -31,6 +32,7 @@ class PhotoCamera(
                         activity, lensFacing, viewFinder.preview, imageCapturer.imageCapture
                 )
 
+                activity.options_bar.updateOptions(camera.cameraInfo.hasFlashUnit())
                 viewFinder.camera = camera
 
             } catch (exc: Exception) {

@@ -8,6 +8,7 @@ import app.newsnap.Configuration
 import app.newsnap.MainActivity
 import app.newsnap.ViewFinder
 import app.newsnap.capturer.VideoCapturer
+import kotlinx.android.synthetic.main.activity_main.*
 
 class VideoCamera(
         private val activity: MainActivity, private val viewFinder: ViewFinder
@@ -37,6 +38,7 @@ class VideoCamera(
                         activity, lensFacing, viewFinder.preview, videoCapturer.videoCapture
                 )
 
+                activity.options_bar.updateOptions(camera.cameraInfo.hasFlashUnit())
                 viewFinder.camera = camera
 
             } catch (exc: Exception) {

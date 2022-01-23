@@ -1,6 +1,7 @@
 package app.newsnap
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -117,6 +118,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun swapCamera() {
         if (activeCamera.lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
             camera_swap_button.setImageResource(R.drawable.ic_camera_front)

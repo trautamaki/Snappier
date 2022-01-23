@@ -38,6 +38,14 @@ class OptionsBar @JvmOverloads constructor(
         this.listener = listener
     }
 
+    fun updateOptions(hasFlashUnit: Boolean) {
+        if (!hasFlashUnit) {
+            button_flash_toggle.visibility = View.GONE
+        } else {
+            button_flash_toggle.visibility = View.VISIBLE
+        }
+    }
+
     override fun onClick(v: View?) {
         listener?.onOptionsBarClick()
         if (v == button_flash_toggle) {
