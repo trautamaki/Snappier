@@ -16,8 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import app.newsnap.camera.PhotoCamera
 import app.newsnap.camera.VideoCamera
-import app.newsnap.capturer.ImageCapturer
-import app.newsnap.capturer.VideoCapturer
 import app.newsnap.ui.OptionsBar.IOptionsBar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,14 +44,21 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         viewFinder = ViewFinder(this, previewView)
 
         // Initialize supported camera modes
-        // TODO: find all supported modes
-        photoCamera = PhotoCamera(this, viewFinder)
-        videoCamera = VideoCamera(this, viewFinder)
+        for (mode: Int in Configuration.supportedCameraModes) {
+            when (mode) {
+                0 -> photoCamera = PhotoCamera(this, viewFinder)
+                1 -> videoCamera = VideoCamera(this, viewFinder)
+            }
+        }
 
         activeCamera = photoCamera
 
         val cameraModes = resources.getStringArray(R.array.camera_modes)
-        cameraModes.forEach { tab_layout.addTab(tab_layout.newTab().setText(it)) }
+        Configuration.supportedCameraModes.forEachIndexed { i, elem ->
+            tab_layout.addTab(tab_layout.newTab()
+                .setText(cameraModes[elem])
+                .setId(i))
+        }
 
         options_bar.setOptionsBarListener(this)
         tab_layout.setOnTabSelectedListener(this)
@@ -130,7 +135,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-                baseContext, it) == PackageManager.PERMISSION_GRANTED
+            baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onFlashToggled(flashMode: Int) {
@@ -151,22 +156,30 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        if (activeCamera.cameraModeId == tab?.position) {
+        if (activeCamera.cameraModeId == tab?.id) {
             return
         }
 
-        activeCamera = when (tab?.position) {
-            0 -> {
+        activeCamera = when (tab?.id) {
+            Configuration.ID_PICTURE_CAMERA -> {
                 Log.d(TAG, "Switch to photo mode")
                 photoCamera
             }
-            1 -> {
+            Configuration.ID_VIDEO_CAMERA -> {
                 Log.d(TAG, "Switch to video mode")
+                videoCamera
+            }
+            Configuration.ID_BOKEH -> {
+                Log.d(TAG, "Switch to bokeh mode")
+                videoCamera
+            }
+            Configuration.ID_NIGHT -> {
+                Log.d(TAG, "Switch to night mode")
                 videoCamera
             }
             else -> {
                 Log.e(TAG, "Unknown tab. Using photo camera.")
-                videoCamera
+                photoCamera
             }
         }
 

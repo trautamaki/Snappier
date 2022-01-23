@@ -17,4 +17,6 @@
     <!-- Capture modes -->
     <string name="photo">Photo</string>
     <string name="video">Video</string>
+    <string name="night">Night</string>
+    <string name="bokeh">Bokeh</string>
 </resources>
