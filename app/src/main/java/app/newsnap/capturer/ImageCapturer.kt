@@ -1,10 +1,12 @@
 package app.newsnap.capturer
 
-import android.net.Uri
+import android.content.ContentValues
+import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
+import android.webkit.MimeTypeMap
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import app.newsnap.Configuration
 import app.newsnap.MainActivity
 
 class ImageCapturer(private val activity: MainActivity, captureMode: Int) : Capturer(activity),
@@ -24,24 +26,27 @@ class ImageCapturer(private val activity: MainActivity, captureMode: Int) : Capt
     fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        // Create time-stamped output file to hold the image
-        lastFile = createFile(outputDirectory, fileNameFormat, ".jpg")
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileFormat)
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, createFileName(fileFormat))
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Configuration.IMAGE_RELATIVE_PATH)
+        }
 
-        // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(lastFile!!).build()
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
+                activity.contentResolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+        ).build()
 
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
+        // Set up image capture listener, which is triggered after photo has been taken
         imageCapture.takePicture(
-                outputOptions, executor, this
+                outputFileOptions, executor, this
         )
     }
 
     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-        val savedUri = Uri.fromFile(lastFile)
-        val msg = "Photo capture succeeded: $savedUri"
-        Toast.makeText(activity.baseContext, msg, Toast.LENGTH_SHORT).show()
-        Log.d(MainActivity.TAG, msg)
+        Log.d(MainActivity.TAG, "Photo capture succeeded: ${output.savedUri}")
     }
 
     override fun onError(exc: ImageCaptureException) {

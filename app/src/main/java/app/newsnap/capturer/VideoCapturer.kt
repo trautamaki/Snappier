@@ -1,11 +1,13 @@
 package app.newsnap.capturer
 
 import android.annotation.SuppressLint
-import android.net.Uri
+import android.content.ContentValues
+import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
+import android.webkit.MimeTypeMap
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.VideoCapture
+import app.newsnap.Configuration
 import app.newsnap.MainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -16,6 +18,8 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
     lateinit var videoCapture: VideoCapture
 
     var recording: Boolean = false
+
+    override var fileFormat = ".mp4"
 
     init {
         build()
@@ -34,16 +38,23 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
 
     @SuppressLint("RestrictedApi", "MissingPermission")
     fun startVideo() {
-        // Create time-stamped output file to hold the image
-        lastFile = createFile(outputDirectory, fileNameFormat, ".mp4")
 
-        // Create output options object which contains file + metadata
-        val outputOptions = VideoCapture.OutputFileOptions.Builder(lastFile!!).build()
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileFormat)
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, createFileName(fileFormat))
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Configuration.IMAGE_RELATIVE_PATH)
+        }
 
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
+        val outputFileOptions = VideoCapture.OutputFileOptions.Builder(
+                activity.contentResolver,
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+        ).build()
+
+        // Set up video capture listener
         videoCapture.startRecording(
-                outputOptions, executor, this
+                outputFileOptions, executor, this
         )
 
         recording = true
@@ -57,11 +68,8 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
         Log.d("NewSnap", "Stop video record")
     }
 
-    override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
-        val savedUri = Uri.fromFile(lastFile)
-        val msg = "Video capture succeeded: $savedUri"
-        Toast.makeText(activity.baseContext, msg, Toast.LENGTH_SHORT).show()
-        Log.d(MainActivity.TAG, msg)
+    override fun onVideoSaved(output: VideoCapture.OutputFileResults) {
+        Log.d(MainActivity.TAG, "Video capture succeeded: ${output.savedUri}")
     }
 
     override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
