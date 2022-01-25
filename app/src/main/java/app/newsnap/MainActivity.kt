@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -108,12 +107,10 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         } else if (activeCamera.cameraModeId == 1) {
             if (videoCamera.recording) {
                 videoCamera.stopVideo()
-                camera_capture_button.backgroundTintList =
-                        ColorStateList.valueOf(resources.getColor(R.color.accent))
+                camera_capture_button.recording = false
             } else {
-                camera_capture_button.backgroundTintList =
-                        ColorStateList.valueOf(resources.getColor(R.color.capture_button_capturing))
                 videoCamera.startVideo()
+                camera_capture_button.recording = true
             }
         }
     }
@@ -165,26 +162,32 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         activeCamera = when (tab?.id) {
             Configuration.ID_PICTURE_CAMERA -> {
                 Log.d(TAG, "Switch to photo mode")
+                camera_capture_button.videoMode = false
                 photoCamera
             }
             Configuration.ID_VIDEO_CAMERA -> {
                 Log.d(TAG, "Switch to video mode")
+                camera_capture_button.videoMode = true
                 videoCamera
             }
             Configuration.ID_BOKEH -> {
                 Log.d(TAG, "Switch to bokeh mode")
+                camera_capture_button.videoMode = false
                 videoCamera
             }
             Configuration.ID_NIGHT -> {
                 Log.d(TAG, "Switch to night mode")
+                camera_capture_button.videoMode = false
                 videoCamera
             }
             else -> {
                 Log.e(TAG, "Unknown tab. Using photo camera.")
+                camera_capture_button.videoMode = false
                 photoCamera
             }
         }
 
+        camera_capture_button.refreshDrawableState()
         activeCamera.startCamera()
     }
 

@@ -14,12 +14,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:elevation="1dp"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <app.newsnap.ui.CaptureButton
         android:id="@+id/camera_capture_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/camera_controls_bottom_margin"
-        android:src="@drawable/capture_ring"
+        android:src="@drawable/capture_button_background"
+        app:backgroundTint="@color/capture_button_color"
+        app:recording="false"
         app:tint="@color/icon_tint"
         app:fabCustomSize="80dp"
         app:layout_constraintLeft_toLeftOf="parent"

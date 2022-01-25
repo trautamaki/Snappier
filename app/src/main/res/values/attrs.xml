@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CaptureButton">
+        <attr name="recording" format="boolean" />
+        <attr name="video_mode" format="boolean" />
+    </declare-styleable>
+</resources>
