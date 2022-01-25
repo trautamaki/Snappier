@@ -8,6 +8,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import app.newsnap.MainActivity
 import app.newsnap.R
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,6 +58,7 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(activity), this
         )
+        activity.camera_capture_button.isEnabled = false
     }
 
     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
@@ -64,10 +66,12 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
         val msg = "Photo capture succeeded: $savedUri"
         Toast.makeText(activity.baseContext, msg, Toast.LENGTH_SHORT).show()
         Log.d(MainActivity.TAG, msg)
+
+        activity.camera_capture_button.isEnabled = true
     }
 
     override fun onError(exc: ImageCaptureException) {
         Log.e(MainActivity.TAG, "Photo capture failed: ${exc.message}", exc)
+        activity.camera_capture_button.isEnabled = true
     }
-
 }

@@ -1,16 +1,21 @@
 package app.newsnap
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,6 +25,7 @@ import app.newsnap.ui.OptionsBar.IOptionsBar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import androidx.constraintlayout.widget.ConstraintLayout
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -39,6 +45,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         options_bar.setOptionsBarListener(this)
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
+
+        // Build viewfinder
+        viewFinder = ViewFinder(this, preview_view, aspectRatio)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -78,6 +87,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     private fun takePhoto() {
         viewFinder.unFadeControls()
+        shutterAnimation()
         imageCapturer.takePhoto()
     }
 
@@ -105,9 +115,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
-                // Build viewfinder
-                viewFinder = ViewFinder(this, preview_view, aspectRatio)
-
                 // Bind use cases to camera
                 val camera = cameraProvider.bindToLifecycle(
                     this, lensFacing, viewFinder.preview, imageCapturer.imageCapture
@@ -124,6 +131,30 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
                 baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun shutterAnimation() {
+        // Make sure shutter view size is same as preview view
+        val previewParams = preview_view.layoutParams as ConstraintLayout.LayoutParams
+        val shutterParams = shutter.layoutParams as ConstraintLayout.LayoutParams
+        shutterParams.topToBottom = previewParams.topToBottom
+        shutterParams.topToTop = previewParams.topToTop
+        shutterParams.dimensionRatio = previewParams.dimensionRatio
+        shutter.layoutParams = shutterParams
+
+        shutter.visibility = View.VISIBLE
+        shutter.animate()
+            .setDuration(100)
+            .alpha(0f)
+            .setStartDelay(50)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    shutter.visibility = View.INVISIBLE
+                    shutter.alpha = 1f
+                }
+            })
+            .start()
     }
 
     companion object {
