@@ -3,8 +3,7 @@
     <color name="accent">#FF03DAC5</color>
     <color name="icon_tint">@android:color/black</color>
     <color name="secondary_icon_tint">#E0E0E0</color>
-    <color name="color_primary">#FF6200EE</color>
-    <!-- material_blue_grey_900 -->
-    <color name="activity_bg">#ff263238</color>
+    <color name="color_primary">#FFFFFF</color>
+    <color name="activity_bg">#212121</color>
     <color name="activity_settings_bg">@android:color/white</color>
 </resources>
