@@ -12,7 +12,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ImageCapturer(private val activity: MainActivity, captureMode: Int) :
+class ImageCapturer(private val activity: MainActivity, private val captureMode: Int,
+        private val aspectRatio: Int) :
     ImageCapture.OnImageSavedCallback {
     lateinit var imageCapture: ImageCapture
         private set
@@ -20,7 +21,7 @@ class ImageCapturer(private val activity: MainActivity, captureMode: Int) :
     private var outputDirectory: File
 
     init {
-        build(captureMode)
+        build()
 
         // Set output directory
         val mediaDir = activity.externalMediaDirs.firstOrNull()?.let {
@@ -30,8 +31,9 @@ class ImageCapturer(private val activity: MainActivity, captureMode: Int) :
             mediaDir else activity.filesDir
     }
 
-    private fun build(captureMode: Int) {
+    private fun build() {
         imageCapture = ImageCapture.Builder()
+            .setTargetAspectRatio(aspectRatio)
             .setCaptureMode(captureMode)
             .build()
     }

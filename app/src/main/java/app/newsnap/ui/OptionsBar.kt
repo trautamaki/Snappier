@@ -22,6 +22,7 @@ class OptionsBar @JvmOverloads constructor(
     interface IOptionsBar {
         fun onFlashToggled(flashMode: Int)
         fun onOptionsBarClick()
+        fun onAspectRatioChanged(aspectRatio: Int)
     }
 
     var listener: IOptionsBar? = null
@@ -32,6 +33,7 @@ class OptionsBar @JvmOverloads constructor(
 
         button_flash_toggle.setOnClickListener(this)
         button_settings.setOnClickListener(this)
+        button_aspect_ratio.setOnClickListener(this)
     }
 
     fun setOptionsBarListener(listener: IOptionsBar) {
@@ -45,6 +47,9 @@ class OptionsBar @JvmOverloads constructor(
             listener?.onFlashToggled(button_flash_toggle.getFlashMode())
         } else if (v == button_settings) {
             context.startActivity(Intent(context, SettingsActivity::class.java))
+        } else if (v == button_aspect_ratio) {
+            button_aspect_ratio.toggleAspectRatio()
+            listener?.onAspectRatioChanged(button_aspect_ratio.getAspectRatio())
         }
     }
 }
