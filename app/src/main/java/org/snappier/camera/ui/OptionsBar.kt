@@ -1,14 +1,14 @@
-package app.newsnap.ui
+package org.snappier.camera.ui
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import app.newsnap.R
+import org.snappier.camera.R
 import kotlinx.android.synthetic.main.options_bar.view.*
 
-import app.newsnap.SettingsActivity
+import org.snappier.camera.SettingsActivity
 
 import android.content.Intent
 

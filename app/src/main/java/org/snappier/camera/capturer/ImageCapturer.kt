@@ -1,4 +1,4 @@
-package app.newsnap.capturer
+package org.snappier.camera.capturer
 
 import android.net.Uri
 import android.util.Log
@@ -6,10 +6,10 @@ import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
-import app.newsnap.Configuration
-import app.newsnap.MainActivity
-import app.newsnap.R
 import kotlinx.android.synthetic.main.activity_main.*
+import org.snappier.camera.Configuration
+import org.snappier.camera.MainActivity
+import org.snappier.camera.R
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

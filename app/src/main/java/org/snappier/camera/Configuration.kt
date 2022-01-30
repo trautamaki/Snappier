@@ -1,6 +1,5 @@
-package app.newsnap
+package org.snappier.camera
 
-import android.app.Activity
 import androidx.camera.core.AspectRatio
 
 class Configuration {

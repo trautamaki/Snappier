@@ -6,9 +6,9 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".camera.MainActivity">
     
-    <app.newsnap.ui.OptionsBar
+    <org.snappier.camera.ui.OptionsBar
         android:id="@+id/options_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package app.newsnap
+package org.snappier.camera
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -7,10 +7,8 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import kotlinx.android.synthetic.main.activity_main.*
 
 class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) :

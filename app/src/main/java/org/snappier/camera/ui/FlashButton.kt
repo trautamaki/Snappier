@@ -1,10 +1,10 @@
-package app.newsnap.ui
+package org.snappier.camera.ui
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.camera.core.ImageCapture
-import app.newsnap.R
+import org.snappier.camera.R
 
 class FlashButton(context: Context, attrs: AttributeSet) : AppCompatImageButton(context, attrs) {
     private var status = ImageCapture.FLASH_MODE_OFF

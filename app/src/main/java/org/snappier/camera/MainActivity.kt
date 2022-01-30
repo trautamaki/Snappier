@@ -1,4 +1,4 @@
-package app.newsnap
+package org.snappier.camera
 
 import android.Manifest
 import android.animation.Animator
@@ -17,9 +17,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import app.newsnap.capturer.ImageCapturer
-import app.newsnap.ui.OptionsBar.IOptionsBar
+import org.snappier.camera.capturer.ImageCapturer
+import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import kotlinx.android.synthetic.main.activity_main.*
+import org.snappier.camera.R
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.constraintlayout.widget.ConstraintLayout

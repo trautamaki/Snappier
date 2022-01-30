@@ -1,9 +1,10 @@
-package app.newsnap
+package org.snappier.camera
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
+import org.snappier.camera.R
 
 class SettingsActivity : AppCompatActivity() {
 
