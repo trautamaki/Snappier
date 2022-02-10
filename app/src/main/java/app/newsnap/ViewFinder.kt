@@ -2,7 +2,9 @@ package app.newsnap
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.os.Handler
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -18,6 +20,31 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     var camera: Camera? = null
 
     lateinit var preview: Preview
+
+    private var handler: Handler = Handler()
+    private var zoomInProgress: Boolean = false
+
+    private val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val scale = camera?.cameraInfo?.zoomState?.value?.zoomRatio?.times(detector.scaleFactor)
+            if (scale != null) {
+                camera?.cameraControl?.setZoomRatio(scale)
+            }
+            return true
+        }
+
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            zoomInProgress = true;
+            return super.onScaleBegin(detector);
+        }
+
+        override fun onScaleEnd(detector: ScaleGestureDetector?) {
+            handler.postDelayed(Runnable { zoomInProgress = false }, 300)
+            super.onScaleEnd(detector)
+        }
+    }
+
+    private val scaleGestureDetector = ScaleGestureDetector(activity.applicationContext, listener)
 
     init {
         build()
@@ -35,6 +62,12 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     }
 
     override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+        scaleGestureDetector.onTouchEvent(motionEvent)
+
+        if (zoomInProgress) {
+            return true
+        }
+
         when (motionEvent.action) {
             MotionEvent.ACTION_DOWN -> return true
             MotionEvent.ACTION_UP -> {
