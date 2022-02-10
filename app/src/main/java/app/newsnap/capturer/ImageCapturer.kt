@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
+import app.newsnap.Configuration
 import app.newsnap.MainActivity
 import app.newsnap.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -13,8 +14,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ImageCapturer(private val activity: MainActivity, private val captureMode: Int,
-        private val aspectRatio: Int) :
+class ImageCapturer(private val activity: MainActivity, private val captureMode: Int) :
     ImageCapture.OnImageSavedCallback {
     lateinit var imageCapture: ImageCapture
         private set
@@ -34,7 +34,7 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
 
     private fun build() {
         imageCapture = ImageCapture.Builder()
-            .setTargetAspectRatio(aspectRatio)
+            .setTargetAspectRatio(Configuration.ASPECT_RATIO)
             .setCaptureMode(captureMode)
             .build()
     }

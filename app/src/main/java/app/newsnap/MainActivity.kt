@@ -5,17 +5,14 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,7 +33,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private lateinit var cameraExecutor: ExecutorService
 
     private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
-    private var aspectRatio: Int = Configuration.DEFAULT_ASPECT_RATIO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +41,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         options_bar.setOptionsBarListener(this)
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
-
-        // Build viewfinder
-        viewFinder = ViewFinder(this, preview_view, aspectRatio)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -109,11 +102,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            imageCapturer = ImageCapturer(this, captureMode, aspectRatio)
+            imageCapturer = ImageCapturer(this, captureMode)
 
             try {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
+
+                // Build viewfinder
+                viewFinder = ViewFinder(this, preview_view)
 
                 // Bind use cases to camera
                 val camera = cameraProvider.bindToLifecycle(
@@ -174,7 +170,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onAspectRatioChanged(aspectRatio: Int) {
-        this.aspectRatio = aspectRatio
+        Configuration.ASPECT_RATIO = aspectRatio
         startCamera()
     }
 
