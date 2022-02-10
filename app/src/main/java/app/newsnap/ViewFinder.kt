@@ -13,8 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import kotlinx.android.synthetic.main.activity_main.*
 
-class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView,
-        private val aspectRatio: Int) :
+class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) :
     View.OnTouchListener {
 
     var camera: Camera? = null
@@ -53,7 +52,7 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     private fun build() {
         setAspectRatio()
         preview = Preview.Builder()
-            .setTargetAspectRatio(aspectRatio)
+            .setTargetAspectRatio(Configuration.ASPECT_RATIO)
             .build()
             .also {
                 it.setSurfaceProvider(previewView.surfaceProvider)
@@ -92,51 +91,23 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     private fun setAspectRatio() {
         val params = previewView.layoutParams as ConstraintLayout.LayoutParams
 
-        if (getAspectInt(params.dimensionRatio) == aspectRatio) {
+        if (Configuration.getAspectInt(params.dimensionRatio) == Configuration.ASPECT_RATIO) {
             return
         }
 
-        if (aspectRatio == AspectRatio.RATIO_16_9) {
+        if (Configuration.ASPECT_RATIO == AspectRatio.RATIO_16_9) {
             // Place preview to top of screen
             params.topToBottom = ConstraintLayout.LayoutParams.UNSET
             params.topToTop = activity.main_layout.id
-            params.dimensionRatio = getAspectString(aspectRatio)
-        } else if (aspectRatio == AspectRatio.RATIO_4_3) {
+            params.dimensionRatio = Configuration.getAspectString(Configuration.ASPECT_RATIO)
+        } else if (Configuration.ASPECT_RATIO == AspectRatio.RATIO_4_3) {
             // Place preview to bottom of options bar
             params.topToTop = ConstraintLayout.LayoutParams.UNSET
             params.topToBottom = activity.options_bar.id
-            params.dimensionRatio = getAspectString(aspectRatio)
+            params.dimensionRatio = Configuration.getAspectString(Configuration.ASPECT_RATIO)
         }
 
         previewView.layoutParams = params
-    }
-
-    private fun getAspectInt(ratio: String) : Int {
-        return when (ratio) {
-            "4:3" -> {
-                0
-            }
-            "9:16" -> {
-                1
-            }
-            else -> {
-                0
-            }
-        }
-    }
-
-    private fun getAspectString(ratio: Int) : String {
-        return when (ratio) {
-            0 -> {
-                "3:4"
-            }
-            1 -> {
-                "9:16"
-            }
-            else -> {
-                "4:3"
-            }
-        }
     }
 
     private fun showFocusRing(x: Float, y: Float) {
