@@ -49,7 +49,6 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
                 // Get touch point
                 val point = factory.createPoint(motionEvent.x, motionEvent.y)
                 showFocusRing(motionEvent.x, motionEvent.y)
-                fadeControls()
                 // Create a MeteringAction
                 val action = FocusMeteringAction.Builder(point).build()
 
@@ -93,28 +92,5 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
                 }
             })
             .start()
-    }
-
-    private fun fadeControls() {
-        if (previewView.y + previewView.height < activity.camera_capture_button.y ||
-                previewView.y > activity.options_bar.y + activity.options_bar.height) {
-            return
-        }
-
-        for ((key, value) in viewsToFade) {
-            key.animate()
-                    .setDuration(350)
-                    .alpha(value)
-                    .start()
-        }
-    }
-
-    fun unFadeControls() {
-        for ((key, _) in viewsToFade) {
-            key.animate()
-                    .setDuration(250)
-                    .alpha(1.0f)
-                    .start()
-        }
     }
 }

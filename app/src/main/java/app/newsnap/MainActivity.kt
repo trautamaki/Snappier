@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -34,6 +36,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private var cameraMode: Int = 0
 
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
+    private var viewsFaded: Boolean = false
+    private val viewsToFade by lazy { hashMapOf(
+        options_bar to 0.3f,
+        camera_capture_button to 0.5f,
+        camera_swap_button to 0.3f,
+        tab_layout to 0.5f
+    ) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +87,17 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         // Set up the listener for take photo button
         camera_capture_button.setOnClickListener { capture() }
         camera_swap_button.setOnClickListener { swapCamera() }
+        previewView.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.action){
+                MotionEvent.ACTION_DOWN -> {
+                    fadeControls()
+                }
+            }
+
+            view.performClick()
+            viewFinder.onTouch(view, motionEvent)
+            return@OnTouchListener true
+        })
     }
 
     override fun onDestroy() {
@@ -100,7 +121,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     private fun capture() {
-        viewFinder.unFadeControls()
+        unFadeControls()
 
         if (activeCamera.cameraModeId == 0) {
             photoCamera.takePhoto()
@@ -132,6 +153,42 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         activeCamera.startCamera()
     }
 
+    private fun fadeControls() {
+        if (viewsFaded) {
+            return
+        }
+
+        // Fade views if they overlap with capture button or options bar.
+        if (previewView.y + previewView.height < camera_capture_button.y ||
+            previewView.y > options_bar.y + options_bar.height) {
+            return
+        }
+
+        for ((key, value) in viewsToFade) {
+            key.animate()
+                .setDuration(350)
+                .alpha(value)
+                .start()
+        }
+
+        viewsFaded = true
+    }
+
+    private fun unFadeControls() {
+        if (!viewsFaded) {
+            return
+        }
+
+        for ((key, _) in viewsToFade) {
+            key.animate()
+                .setDuration(250)
+                .alpha(1.0f)
+                .start()
+        }
+
+        viewsFaded = false
+    }
+
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             baseContext, it) == PackageManager.PERMISSION_GRANTED
@@ -142,7 +199,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onOptionsBarClick() {
-        viewFinder.unFadeControls()
+        unFadeControls()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
