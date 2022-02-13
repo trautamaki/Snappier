@@ -6,6 +6,7 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.UseCase
 import app.newsnap.Configuration
 import app.newsnap.MainActivity
 
@@ -51,5 +52,9 @@ class ImageCapturer(private val activity: MainActivity, captureMode: Int) : Capt
 
     override fun onError(exc: ImageCaptureException) {
         Log.e(MainActivity.TAG, "Photo capture failed: ${exc.message}", exc)
+    }
+
+    override fun getCapture(): UseCase {
+        return imageCapture
     }
 }

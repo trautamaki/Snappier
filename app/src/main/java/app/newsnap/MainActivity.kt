@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onFlashToggled(flashMode: Int) {
-        photoCamera.imageCapturer.imageCapture.flashMode = flashMode
+        (photoCamera.capturer.getCapture() as ImageCapture).flashMode = flashMode
     }
 
     override fun onOptionsBarClick() {

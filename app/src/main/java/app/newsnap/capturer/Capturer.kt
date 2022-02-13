@@ -1,12 +1,13 @@
 package app.newsnap.capturer
 
+import androidx.camera.core.UseCase
 import androidx.core.content.ContextCompat
 import app.newsnap.Configuration
 import app.newsnap.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class Capturer(activity: MainActivity) {
+abstract class Capturer(activity: MainActivity) {
     protected val executor = ContextCompat.getMainExecutor(activity)
     protected open var fileFormat = ".jpg"
 
@@ -14,4 +15,6 @@ open class Capturer(activity: MainActivity) {
         return SimpleDateFormat(Configuration.FILE_NAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis()) + extension
     }
+
+    abstract fun getCapture(): UseCase
 }

@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.UseCase
 import androidx.camera.core.VideoCapture
 import app.newsnap.Configuration
 import app.newsnap.MainActivity
@@ -74,5 +75,9 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
 
     override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
         Log.e("NewSnap", "Video error: $message")
+    }
+
+    override fun getCapture(): UseCase {
+        return videoCapture
     }
 }

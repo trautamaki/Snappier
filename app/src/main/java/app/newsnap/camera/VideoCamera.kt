@@ -1,57 +1,31 @@
 package app.newsnap.camera
 
-import android.util.Log
 import androidx.camera.core.CameraSelector
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.content.ContextCompat
 import app.newsnap.Configuration
 import app.newsnap.MainActivity
 import app.newsnap.ViewFinder
+import app.newsnap.capturer.Capturer
 import app.newsnap.capturer.VideoCapturer
-import kotlinx.android.synthetic.main.activity_main.*
 
 class VideoCamera(
         private val activity: MainActivity, private val viewFinder: ViewFinder
-) : Camera() {
+) : Camera(activity, viewFinder) {
     override var cameraModeId = Configuration.ID_VIDEO_CAMERA
     var lensFacingVideo: Int = CameraSelector.LENS_FACING_BACK
 
     var recording: Boolean = false
-        get() = videoCapturer.recording
+        get() = (capturer as VideoCapturer).recording
 
-    lateinit var videoCapturer: VideoCapturer
 
-    override fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(activity.applicationContext)
-
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-
-            videoCapturer = VideoCapturer(activity, lensFacingVideo)
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                val camera = cameraProvider.bindToLifecycle(
-                        activity, lensFacing, viewFinder.preview, videoCapturer.videoCapture
-                )
-
-                activity.options_bar.updateOptions(camera.cameraInfo.hasFlashUnit())
-                viewFinder.camera = camera
-
-            } catch (exc: Exception) {
-                Log.e(MainActivity.TAG, "Use case binding failed", exc)
-            }
-        }, ContextCompat.getMainExecutor(activity.applicationContext))
+    override fun buildCapturer(): Capturer {
+        return VideoCapturer(activity, lensFacingVideo)
     }
 
     fun startVideo() {
-        videoCapturer.startVideo()
+        (capturer as VideoCapturer).startVideo()
     }
 
     fun stopVideo() {
-        videoCapturer.stopVideo()
+        (capturer as VideoCapturer).stopVideo()
     }
 }
