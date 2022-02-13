@@ -1,13 +1,6 @@
 android_app {
     name: "Snappier",
     overrides: ["Camera2"],
-
-    resource_dirs: ["app/src/main/res"],
-
-    srcs: [
-        "app/src/main/java/app/newsnap/src/**/*.kt",
-    ],
-
     product_specific: true,
 
     static_libs: [
@@ -19,7 +12,5 @@ android_app {
     ],
 
     sdk_version: "current",
-
-    manifest: "app/src/main/AndroidManifest.xml",
 }
 
