@@ -6,15 +6,16 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import kotlinx.android.synthetic.main.activity_main.*
 
-class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) :
-    View.OnTouchListener {
+class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) {
 
     var camera: Camera? = null
 
@@ -57,10 +58,9 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
             .also {
                 it.setSurfaceProvider(previewView.surfaceProvider)
             }
-        previewView.setOnTouchListener(this)
     }
 
-    override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+    fun onTouch(motionEvent: MotionEvent): Boolean {
         scaleGestureDetector.onTouchEvent(motionEvent)
 
         if (zoomInProgress) {
@@ -76,7 +76,6 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
                 // Get touch point
                 val point = factory.createPoint(motionEvent.x, motionEvent.y)
                 showFocusRing(motionEvent.x, motionEvent.y)
-                fadeControls()
                 // Create a MeteringAction
                 val action = FocusMeteringAction.Builder(point).build()
 
@@ -142,40 +141,5 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
                 }
             })
             .start()
-    }
-
-    private fun fadeControls() {
-        if (previewView.y + previewView.height < activity.camera_capture_button.y ||
-                previewView.y > activity.options_bar.y + activity.options_bar.height) {
-            return
-        }
-
-        activity.options_bar.animate()
-                .setDuration(350)
-                .alpha(0.3f)
-                .start()
-        activity.camera_capture_button.animate()
-                .setDuration(350)
-                .alpha(0.5f)
-                .start()
-        activity.camera_swap_button.animate()
-                .setDuration(350)
-                .alpha(0.3f)
-                .start()
-    }
-
-    fun unFadeControls() {
-        activity.options_bar.animate()
-                .setDuration(250)
-                .alpha(1f)
-                .start()
-        activity.camera_capture_button.animate()
-                .setDuration(250)
-                .alpha(1f)
-                .start()
-        activity.camera_swap_button.animate()
-                .setDuration(250)
-                .alpha(1f)
-                .start()
     }
 }

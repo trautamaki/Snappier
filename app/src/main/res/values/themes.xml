@@ -16,4 +16,10 @@
         <item name="android:layout_height">@dimen/options_bar_button_size</item>
         <item name="android:background">?selectableItemBackgroundBorderless</item>
     </style>
+
+    <style name="Theme.NewSnap.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">@color/activity_bg</item>
+        <item name="android:tabStripEnabled">false</item>
+        <item name="tabRippleColor">@android:color/transparent</item>
+    </style>
 </resources>

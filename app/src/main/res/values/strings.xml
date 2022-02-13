@@ -13,4 +13,10 @@
     <string name="settings_capture_mode_title">Capture mode</string>
     <string name="settings_capture_mode_max_quality">Maximize quality</string>
     <string name="settings_capture_mode_min_latency">Minimize latency</string>
+
+    <!-- Capture modes -->
+    <string name="photo">Photo</string>
+    <string name="video">Video</string>
+    <string name="night">Night</string>
+    <string name="bokeh">Bokeh</string>
 </resources>

@@ -3,48 +3,78 @@ package app.newsnap
 import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import app.newsnap.capturer.ImageCapturer
+import app.newsnap.camera.PhotoCamera
+import app.newsnap.camera.VideoCamera
 import app.newsnap.ui.OptionsBar.IOptionsBar
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.constraintlayout.widget.ConstraintLayout
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
-    SharedPreferences.OnSharedPreferenceChangeListener {
-    private var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener {
 
-    private lateinit var viewFinder: ViewFinder
-    private lateinit var imageCapturer: ImageCapturer
-    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var photoCamera: PhotoCamera
+    private lateinit var videoCamera: VideoCamera
+    private lateinit var activeCamera: app.newsnap.camera.Camera
 
     private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
+    private var cameraMode: Int = 0
+
+    private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
+    private var viewsFaded: Boolean = false
+    private val viewsToFade by lazy { hashMapOf(
+        options_bar to 0.3f,
+        camera_capture_button to 0.5f,
+        camera_swap_button to 0.3f,
+        tab_layout to 0.5f
+    ) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initialize supported camera modes
+        for (mode: Int in Configuration.supportedCameraModes) {
+            when (mode) {
+                0 -> photoCamera = PhotoCamera(this)
+                1 -> videoCamera = VideoCamera(this)
+            }
+        }
+
+        activeCamera = photoCamera
+
+        val cameraModes = resources.getStringArray(R.array.camera_modes)
+        Configuration.supportedCameraModes.forEachIndexed { i, elem ->
+            tab_layout.addTab(tab_layout.newTab()
+                .setText(cameraModes[elem])
+                .setId(i))
+        }
+
         options_bar.setOptionsBarListener(this)
+        tab_layout.setOnTabSelectedListener(this)
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
-            startCamera()
+            activeCamera.startCamera()
         } else {
             ActivityCompat.requestPermissions(
                     this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
@@ -52,10 +82,19 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
 
         // Set up the listener for take photo button
-        camera_capture_button.setOnClickListener { takePhoto() }
+        camera_capture_button.setOnClickListener { capture() }
         camera_swap_button.setOnClickListener { swapCamera() }
+        preview_view.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    fadeControls()
+                }
+            }
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
+            view.performClick()
+            activeCamera.viewFinder.onTouch(motionEvent)
+            return@OnTouchListener true
+        })
     }
 
     override fun onDestroy() {
@@ -69,7 +108,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera()
+                activeCamera.startCamera()
             } else {
                 Toast.makeText(this, getString(R.string.permissions_not_granted),
                         Toast.LENGTH_SHORT).show()
@@ -78,50 +117,74 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
     }
 
-    private fun takePhoto() {
-        viewFinder.unFadeControls()
-        shutterAnimation()
-        imageCapturer.takePhoto()
+    private fun capture() {
+        unFadeControls()
+
+        if (activeCamera.cameraModeId == 0) {
+            photoCamera.takePhoto()
+            shutterAnimation()
+        } else if (activeCamera.cameraModeId == 1) {
+            if (videoCamera.recording) {
+                videoCamera.stopVideo()
+                camera_capture_button.recording = false
+            } else {
+                videoCamera.startVideo()
+                camera_capture_button.recording = true
+            }
+        }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun swapCamera() {
-        lensFacing = if (lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
+        if (activeCamera.lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
             camera_swap_button.setImageResource(R.drawable.ic_camera_front)
-            CameraSelector.DEFAULT_BACK_CAMERA
+            videoCamera.lensFacingVideo = CameraSelector.LENS_FACING_BACK
+            videoCamera.lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
+            photoCamera.lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
         } else {
             camera_swap_button.setImageResource(R.drawable.ic_camera_rear)
-            CameraSelector.DEFAULT_FRONT_CAMERA
+            videoCamera.lensFacingVideo = CameraSelector.LENS_FACING_FRONT
+            videoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
+            photoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
         }
 
-        startCamera()
+        activeCamera.startCamera()
     }
 
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+    private fun fadeControls() {
+        if (viewsFaded) {
+            return
+        }
 
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+        // Fade views if they overlap with capture button or options bar.
+        if (preview_view.y + preview_view.height < camera_capture_button.y ||
+            preview_view.y > options_bar.y + options_bar.height) {
+            return
+        }
 
-            imageCapturer = ImageCapturer(this, captureMode)
+        for ((key, value) in viewsToFade) {
+            key.animate()
+                .setDuration(350)
+                .alpha(value)
+                .start()
+        }
 
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
+        viewsFaded = true
+    }
 
-                // Build viewfinder
-                viewFinder = ViewFinder(this, preview_view)
+    private fun unFadeControls() {
+        if (!viewsFaded) {
+            return
+        }
 
-                // Bind use cases to camera
-                val camera = cameraProvider.bindToLifecycle(
-                    this, lensFacing, viewFinder.preview, imageCapturer.imageCapture
-                )
+        for ((key, _) in viewsToFade) {
+            key.animate()
+                .setDuration(250)
+                .alpha(1.0f)
+                .start()
+        }
 
-                viewFinder.camera = camera
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-        }, ContextCompat.getMainExecutor(this))
+        viewsFaded = false
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
@@ -153,31 +216,75 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             .start()
     }
 
-    companion object {
-        const val TAG = "NewSnap"
-        const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        val SAVEFILE_LOCATION = Environment.DIRECTORY_DCIM
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-    }
-
     override fun onFlashToggled(flashMode: Int) {
-        imageCapturer.imageCapture.flashMode = flashMode
+        (photoCamera.capturer.getCapture() as ImageCapture).flashMode = flashMode
     }
 
     override fun onOptionsBarClick() {
-        viewFinder.unFadeControls()
+        unFadeControls()
     }
 
     override fun onAspectRatioChanged(aspectRatio: Int) {
         Configuration.ASPECT_RATIO = aspectRatio
-        startCamera()
+        activeCamera.startCamera()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         if (key == Configuration.KEY_CAPTURE_MODE) {
-            captureMode = sharedPreferences.getString(key, "0")!!.toInt()
-            startCamera()
+            photoCamera.handleCaptureModeChange(sharedPreferences.getString(key, "0")!!.toInt())
+            if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
+                activeCamera.startCamera()
+            }
         }
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab?) {
+        if (activeCamera.cameraModeId == tab?.id) {
+            return
+        }
+
+        activeCamera = when (tab?.id) {
+            Configuration.ID_PICTURE_CAMERA -> {
+                Log.d(TAG, "Switch to photo mode")
+                camera_capture_button.videoMode = false
+                photoCamera
+            }
+            Configuration.ID_VIDEO_CAMERA -> {
+                Log.d(TAG, "Switch to video mode")
+                camera_capture_button.videoMode = true
+                videoCamera
+            }
+            Configuration.ID_BOKEH -> {
+                Log.d(TAG, "Switch to bokeh mode")
+                camera_capture_button.videoMode = false
+                videoCamera
+            }
+            Configuration.ID_NIGHT -> {
+                Log.d(TAG, "Switch to night mode")
+                camera_capture_button.videoMode = false
+                videoCamera
+            }
+            else -> {
+                Log.e(TAG, "Unknown tab. Using photo camera.")
+                camera_capture_button.videoMode = false
+                photoCamera
+            }
+        }
+
+        camera_capture_button.refreshDrawableState()
+        activeCamera.startCamera()
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+    override fun onTabReselected(tab: TabLayout.Tab?) {}
+
+    companion object {
+        const val TAG = "NewSnap"
+        private const val REQUEST_CODE_PERMISSIONS = 10
+        private val REQUIRED_PERMISSIONS = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+        )
     }
 }
