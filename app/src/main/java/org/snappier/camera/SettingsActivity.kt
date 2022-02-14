@@ -1,4 +1,4 @@
-package app.newsnap
+package org.snappier.camera
 
 import android.os.Bundle
 import android.view.MenuItem

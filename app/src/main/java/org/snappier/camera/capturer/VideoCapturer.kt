@@ -1,4 +1,4 @@
-package app.newsnap.capturer
+package org.snappier.camera.capturer
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -8,8 +8,8 @@ import android.webkit.MimeTypeMap
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.UseCase
 import androidx.camera.core.VideoCapture
-import app.newsnap.Configuration
-import app.newsnap.MainActivity
+import org.snappier.camera.Configuration
+import org.snappier.camera.MainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class VideoCapturer(private val activity: MainActivity, private val lensFacing: Int) :
@@ -58,14 +58,14 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
         )
 
         recording = true
-        Log.d("NewSnap", "Start video record")
+        Log.d("Snappier", "Start video record")
     }
 
     @SuppressLint("RestrictedApi")
     fun stopVideo() {
         videoCapture.stopRecording()
         recording = false
-        Log.d("NewSnap", "Stop video record")
+        Log.d("Snappier", "Stop video record")
     }
 
     @SuppressLint("RestrictedApi")
@@ -75,7 +75,7 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
 
     @SuppressLint("RestrictedApi")
     override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
-        Log.e("NewSnap", "Video error: $message")
+        Log.e("Snappier", "Video error: $message")
     }
 
     override fun getCapture(): UseCase {

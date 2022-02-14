@@ -1,23 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.NewSnap.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Snappier.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="android:windowBackground">@color/activity_bg</item>
     </style>
 
-    <style name="Theme.NewSnap.Settings" parent="Theme.MaterialComponents.DayNight">
+    <style name="Theme.Snappier.Settings" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/color_primary</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="android:windowBackground">@color/activity_settings_bg</item>
     </style>
 
-    <style name="Theme.NewSnap.ImageButton" parent="Widget.AppCompat.ImageButton">
+    <style name="Theme.Snappier.ImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">@dimen/options_bar_button_size</item>
         <item name="android:layout_height">@dimen/options_bar_button_size</item>
         <item name="android:background">?selectableItemBackgroundBorderless</item>
     </style>
 
-    <style name="Theme.NewSnap.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+    <style name="Theme.Snappier.TabLayout" parent="Widget.MaterialComponents.TabLayout">
         <item name="android:background">@color/activity_bg</item>
         <item name="android:tabStripEnabled">false</item>
         <item name="tabRippleColor">@android:color/transparent</item>

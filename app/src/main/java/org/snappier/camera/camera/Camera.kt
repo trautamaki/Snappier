@@ -1,13 +1,13 @@
-package app.newsnap.camera
+package org.snappier.camera.camera
 
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import app.newsnap.Configuration
-import app.newsnap.MainActivity
-import app.newsnap.ViewFinder
-import app.newsnap.capturer.Capturer
+import org.snappier.camera.Configuration
+import org.snappier.camera.MainActivity
+import org.snappier.camera.ViewFinder
+import org.snappier.camera.capturer.Capturer
 import kotlinx.android.synthetic.main.activity_main.*
 
 abstract class Camera(

@@ -1,12 +1,11 @@
-package app.newsnap.ui
+package org.snappier.camera.ui
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.camera.core.AspectRatio
-import androidx.camera.core.ImageCapture
-import app.newsnap.Configuration
-import app.newsnap.R
+import org.snappier.camera.Configuration
+import org.snappier.camera.R
 
 class AspectButton(context: Context, attrs: AttributeSet) : AppCompatImageButton(context, attrs) {
     private var status = Configuration.DEFAULT_ASPECT_RATIO

@@ -7,18 +7,18 @@
     android:gravity="center_horizontal"
     android:background="@color/activity_bg">
 
-    <app.newsnap.ui.FlashButton
+    <org.snappier.camera.ui.FlashButton
         android:id="@+id/button_flash_toggle"
         android:src="@drawable/ic_flash_off"
-        style="@style/Theme.NewSnap.ImageButton"/>
+        style="@style/Theme.Snappier.ImageButton"/>
 
     <ImageButton
         android:id="@+id/button_settings"
         android:src="@drawable/ic_settings"
-        style="@style/Theme.NewSnap.ImageButton"/>
+        style="@style/Theme.Snappier.ImageButton"/>
 
-    <app.newsnap.ui.AspectButton
+    <org.snappier.camera.ui.AspectButton
         android:id="@+id/button_aspect_ratio"
         android:src="@drawable/ic_3_4"
-        style="@style/Theme.NewSnap.ImageButton"/>
+        style="@style/Theme.Snappier.ImageButton"/>
 </LinearLayout>

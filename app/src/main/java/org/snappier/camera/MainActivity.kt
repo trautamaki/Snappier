@@ -1,4 +1,4 @@
-package app.newsnap
+package org.snappier.camera
 
 import android.Manifest
 import android.animation.Animator
@@ -17,9 +17,9 @@ import androidx.camera.core.ImageCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import app.newsnap.camera.PhotoCamera
-import app.newsnap.camera.VideoCamera
-import app.newsnap.ui.OptionsBar.IOptionsBar
+import org.snappier.camera.camera.PhotoCamera
+import org.snappier.camera.camera.VideoCamera
+import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
-    private lateinit var activeCamera: app.newsnap.camera.Camera
+    private lateinit var activeCamera: org.snappier.camera.camera.Camera
 
     private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
     private var cameraMode: Int = 0
@@ -280,7 +280,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     override fun onTabReselected(tab: TabLayout.Tab?) {}
 
     companion object {
-        const val TAG = "NewSnap"
+        const val TAG = "Snappier"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(
             Manifest.permission.CAMERA,

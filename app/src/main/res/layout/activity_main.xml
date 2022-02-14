@@ -8,14 +8,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     
-    <app.newsnap.ui.OptionsBar
+    <org.snappier.camera.ui.OptionsBar
         android:id="@+id/options_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:elevation="2dp"/>
 
-    <app.newsnap.ui.CaptureButton
+    <org.snappier.camera.ui.CaptureButton
         android:id="@+id/camera_capture_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:elevation="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        style="@style/Theme.NewSnap.TabLayout"/>
+        style="@style/Theme.Snappier.TabLayout"/>
 
     <ImageView
         android:layout_width="84dp"

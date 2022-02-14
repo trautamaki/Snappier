@@ -1,8 +1,8 @@
-package app.newsnap.ui
+package org.snappier.camera.ui
 
 import android.content.Context
 import android.util.AttributeSet
-import app.newsnap.R
+import org.snappier.camera.R
 
 class CaptureButton(context: Context, attrs: AttributeSet) :
     com.google.android.material.floatingactionbutton.FloatingActionButton(context, attrs) {

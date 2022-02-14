@@ -1,4 +1,4 @@
-package app.newsnap.capturer
+package org.snappier.camera.capturer
 
 import android.content.ContentValues
 import android.provider.MediaStore
@@ -7,8 +7,8 @@ import android.webkit.MimeTypeMap
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.UseCase
-import app.newsnap.Configuration
-import app.newsnap.MainActivity
+import org.snappier.camera.Configuration
+import org.snappier.camera.MainActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class ImageCapturer(private val activity: MainActivity, private val captureMode: Int) :

@@ -1,10 +1,9 @@
-package app.newsnap.camera
+package org.snappier.camera.camera
 
 import androidx.camera.core.ImageCapture
-import app.newsnap.MainActivity
-import app.newsnap.ViewFinder
-import app.newsnap.capturer.Capturer
-import app.newsnap.capturer.ImageCapturer
+import org.snappier.camera.MainActivity
+import org.snappier.camera.capturer.Capturer
+import org.snappier.camera.capturer.ImageCapturer
 
 class PhotoCamera(
         private val activity: MainActivity) : Camera(activity) {

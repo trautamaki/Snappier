@@ -1,9 +1,9 @@
-package app.newsnap.capturer
+package org.snappier.camera.capturer
 
 import androidx.camera.core.UseCase
 import androidx.core.content.ContextCompat
-import app.newsnap.Configuration
-import app.newsnap.MainActivity
+import org.snappier.camera.Configuration
+import org.snappier.camera.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
 

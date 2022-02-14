@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewSnap</string>
+    <string name="app_name">Snappier</string>
 
     <!-- Permissions -->
     <string name="permissions_not_granted">Permissions not granted by the user.</string>
