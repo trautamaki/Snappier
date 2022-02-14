@@ -25,9 +25,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.constraintlayout.widget.ConstraintLayout
+import org.snappier.camera.capturer.Capturer
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
-    SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener {
+    SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
+    Capturer.ICapturer {
 
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
@@ -278,6 +280,33 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
     override fun onTabReselected(tab: TabLayout.Tab?) {}
+
+    override fun onStartTakingPicture() {
+        camera_capture_button.isEnabled = false
+    }
+
+    override fun onPictureTaken() {
+        camera_capture_button.isEnabled = true
+    }
+
+    override fun onVideoStart() {
+        Log.d("Snappier", "Start video record")
+        camera_swap_button.visibility = View.INVISIBLE
+    }
+
+    override fun onVideoStop() {
+        Log.d("Snappier", "Stop video record")
+        camera_swap_button.visibility = View.VISIBLE
+    }
+
+    override fun onVideoSaved() {
+        Log.d(TAG, "Video capture succeeded")
+    }
+
+    override fun onError(msg: String) {
+        Log.e(TAG, msg)
+        camera_capture_button.isEnabled = true
+    }
 
     companion object {
         const val TAG = "Snappier"

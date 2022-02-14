@@ -53,29 +53,26 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
         ).build()
 
         // Set up video capture listener
-        videoCapture.startRecording(
-                outputFileOptions, executor, this
-        )
+        videoCapture.startRecording(outputFileOptions, executor, this)
 
         recording = true
-        Log.d("Snappier", "Start video record")
+        listener?.onVideoStart()
     }
 
     @SuppressLint("RestrictedApi")
     fun stopVideo() {
         videoCapture.stopRecording()
-        recording = false
-        Log.d("Snappier", "Stop video record")
+        listener?.onVideoStop()
     }
 
     @SuppressLint("RestrictedApi")
     override fun onVideoSaved(output: VideoCapture.OutputFileResults) {
-        Log.d(MainActivity.TAG, "Video capture succeeded: ${output.savedUri}")
+        listener?.onVideoSaved()
     }
 
     @SuppressLint("RestrictedApi")
     override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
-        Log.e("Snappier", "Video error: $message")
+        listener?.onError(message)
     }
 
     override fun getCapture(): UseCase {

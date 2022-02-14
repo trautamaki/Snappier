@@ -27,6 +27,7 @@ abstract class Camera(
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             capturer = buildCapturer()
+            capturer.setCapturerListener(activity)
 
             try {
                 // Unbind use cases before rebinding

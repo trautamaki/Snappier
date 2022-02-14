@@ -47,17 +47,18 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
         imageCapture.takePicture(
                 outputFileOptions, executor, this
         )
-        activity.camera_capture_button.isEnabled = false
+
+        listener?.onStartTakingPicture()
     }
 
     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
         Log.d(MainActivity.TAG, "Photo capture succeeded: ${output.savedUri}")
-        activity.camera_capture_button.isEnabled = true
+        listener?.onPictureTaken()
     }
 
     override fun onError(exc: ImageCaptureException) {
         Log.e(MainActivity.TAG, "Photo capture failed: ${exc.message}", exc)
-        activity.camera_capture_button.isEnabled = true
+        exc.message?.let { listener?.onError(it) }
     }
 
     override fun getCapture(): UseCase {

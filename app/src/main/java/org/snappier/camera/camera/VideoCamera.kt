@@ -4,6 +4,7 @@ import androidx.camera.core.CameraSelector
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
 import org.snappier.camera.capturer.Capturer
+import org.snappier.camera.capturer.ImageCapturer
 import org.snappier.camera.capturer.VideoCapturer
 
 class VideoCamera(
