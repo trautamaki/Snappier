@@ -14,18 +14,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import org.snappier.camera.camera.PhotoCamera
-import org.snappier.camera.camera.VideoCamera
-import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.options_bar.view.*
+import org.snappier.camera.camera.PhotoCamera
+import org.snappier.camera.camera.VideoCamera
+import org.snappier.camera.capturer.Capturer
+import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import androidx.constraintlayout.widget.ConstraintLayout
-import org.snappier.camera.capturer.Capturer
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
@@ -220,6 +221,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     override fun onFlashToggled(flashMode: Int) {
         (photoCamera.capturer.getCapture() as ImageCapture).flashMode = flashMode
+        if (activeCamera is VideoCamera) {
+            videoCamera.setFlash(flashMode)
+        }
     }
 
     override fun onOptionsBarClick() {
@@ -246,24 +250,25 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
 
         activeCamera = when (tab?.id) {
-            Configuration.ID_PICTURE_CAMERA -> {
+            Configuration.ID_PICTURE_CAMERA,
+            Configuration.ID_BOKEH,
+            Configuration.ID_NIGHT -> {
                 Log.d(TAG, "Switch to photo mode")
                 camera_capture_button.videoMode = false
+                options_bar.button_flash_toggle.setFlashOptions(true /* triState */)
                 photoCamera
             }
             Configuration.ID_VIDEO_CAMERA -> {
                 Log.d(TAG, "Switch to video mode")
                 camera_capture_button.videoMode = true
-                videoCamera
-            }
-            Configuration.ID_BOKEH -> {
-                Log.d(TAG, "Switch to bokeh mode")
-                camera_capture_button.videoMode = false
-                videoCamera
-            }
-            Configuration.ID_NIGHT -> {
-                Log.d(TAG, "Switch to night mode")
-                camera_capture_button.videoMode = false
+                // Switch the flash to off-mode if it's in auto-mode
+                val flashMode = options_bar.button_flash_toggle.getFlashMode()
+                if (flashMode == ImageCapture.FLASH_MODE_AUTO) {
+                    options_bar.button_flash_toggle.toggleMode()
+                }
+
+                options_bar.button_flash_toggle.setFlashOptions(false /* triState */)
+                videoCamera.setFlash(flashMode)
                 videoCamera
             }
             else -> {

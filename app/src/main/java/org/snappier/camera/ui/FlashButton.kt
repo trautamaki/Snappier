@@ -7,31 +7,47 @@ import androidx.camera.core.ImageCapture
 import org.snappier.camera.R
 
 class FlashButton(context: Context, attrs: AttributeSet) : AppCompatImageButton(context, attrs) {
-    private var status = ImageCapture.FLASH_MODE_OFF
+
+    private val triState = arrayOf(
+        ImageCapture.FLASH_MODE_OFF,
+        ImageCapture.FLASH_MODE_ON,
+        ImageCapture.FLASH_MODE_AUTO
+    )
+    private val onOff = arrayOf(ImageCapture.FLASH_MODE_OFF, ImageCapture.FLASH_MODE_ON)
+    private var activeFlashOptions = triState
+    private var status = 0
 
     fun getFlashMode(): Int {
-        return status
+        return activeFlashOptions[status]
     }
 
     fun toggleMode() {
-        val previous = status
-        status = when (previous) {
-            ImageCapture.FLASH_MODE_ON -> {
+        status++
+        if (status == activeFlashOptions.size) {
+            status = 0
+        }
+
+        when (status) {
+            0 -> {
                 setImageResource(R.drawable.ic_flash_off)
-                ImageCapture.FLASH_MODE_OFF
             }
-            ImageCapture.FLASH_MODE_OFF -> {
-                setImageResource(R.drawable.ic_flash_auto)
-                ImageCapture.FLASH_MODE_AUTO
-            }
-            ImageCapture.FLASH_MODE_AUTO -> {
+            1 -> {
                 setImageResource(R.drawable.ic_flash_on)
-                ImageCapture.FLASH_MODE_ON
+            }
+            2 -> {
+                setImageResource(R.drawable.ic_flash_auto)
             }
             else -> {
                 setImageResource(R.drawable.ic_flash_off)
-                ImageCapture.FLASH_MODE_OFF
             }
+        }
+    }
+
+    fun setFlashOptions(useTriState: Boolean) {
+        activeFlashOptions = if (useTriState) {
+            triState
+        } else {
+            onOff
         }
     }
 }

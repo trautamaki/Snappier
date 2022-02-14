@@ -1,6 +1,7 @@
 package org.snappier.camera.camera
 
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import kotlinx.android.synthetic.main.activity_main.*
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
@@ -20,6 +21,10 @@ class VideoCamera(
     override fun buildCapturer(): Capturer {
         return VideoCapturer(activity.contentResolver, lensFacingVideo,
             activity.preview_view.display.rotation, activity.mainExecutor)
+    }
+
+    fun setFlash(flashMode: Int) {
+        camera?.cameraControl?.enableTorch(flashMode == ImageCapture.FLASH_MODE_ON)
     }
 
     fun startVideo() {

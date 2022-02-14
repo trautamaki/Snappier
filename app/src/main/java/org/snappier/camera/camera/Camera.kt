@@ -1,6 +1,7 @@
 package org.snappier.camera.camera
 
 import android.util.Log
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -17,6 +18,8 @@ abstract class Camera(
     var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     lateinit var capturer: Capturer
     lateinit var viewFinder: ViewFinder
+
+    protected var camera: Camera? = null
 
     abstract fun buildCapturer(): Capturer
 
@@ -37,13 +40,12 @@ abstract class Camera(
                 viewFinder = ViewFinder(activity, activity.preview_view)
 
                 // Bind use cases to camera
-                val camera = cameraProvider.bindToLifecycle(
+                camera = cameraProvider.bindToLifecycle(
                     activity, lensFacing, viewFinder.preview, capturer.getCapture()
                 )
 
-                activity.options_bar.updateOptions(camera.cameraInfo.hasFlashUnit())
+                camera?.cameraInfo?.hasFlashUnit()?.let { activity.options_bar.updateOptions(it) }
                 viewFinder.camera = camera
-
             } catch (exc: Exception) {
                 Log.e(MainActivity.TAG, "Use case binding failed", exc)
             }
