@@ -6,8 +6,9 @@ import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executor
 
-abstract class Capturer(activity: MainActivity) {
+abstract class Capturer(protected val executor: Executor) {
     interface ICapturer {
         fun onStartTakingPicture()
         fun onPictureTaken()
@@ -19,7 +20,6 @@ abstract class Capturer(activity: MainActivity) {
 
     protected var listener: ICapturer? = null
 
-    protected val executor = ContextCompat.getMainExecutor(activity)
     protected open var fileFormat = ".jpg"
 
     fun setCapturerListener(listener: ICapturer) {

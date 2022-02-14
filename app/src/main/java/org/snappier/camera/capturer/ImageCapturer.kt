@@ -1,5 +1,6 @@
 package org.snappier.camera.capturer
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.provider.MediaStore
 import android.util.Log
@@ -9,10 +10,12 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.UseCase
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.Executor
 
-class ImageCapturer(private val activity: MainActivity, private val captureMode: Int) :
-    Capturer(activity), ImageCapture.OnImageSavedCallback {
+class ImageCapturer(
+    private val contentResolver: ContentResolver, private val captureMode: Int, executor: Executor,
+) :
+    Capturer(executor), ImageCapture.OnImageSavedCallback {
 
     lateinit var imageCapture: ImageCapture
 
@@ -38,7 +41,7 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
         }
 
         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
-                activity.contentResolver,
+                contentResolver,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues
         ).build()

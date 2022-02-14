@@ -10,7 +10,7 @@ class PhotoCamera(
     private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
 
     override fun buildCapturer(): Capturer {
-        return ImageCapturer(activity, captureMode)
+        return ImageCapturer(activity.contentResolver, captureMode, activity.mainExecutor)
     }
 
     fun handleCaptureModeChange(captureMode: Int) {

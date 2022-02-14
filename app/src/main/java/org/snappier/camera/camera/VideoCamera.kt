@@ -1,6 +1,7 @@
 package org.snappier.camera.camera
 
 import androidx.camera.core.CameraSelector
+import kotlinx.android.synthetic.main.activity_main.*
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
 import org.snappier.camera.capturer.Capturer
@@ -17,7 +18,8 @@ class VideoCamera(
 
 
     override fun buildCapturer(): Capturer {
-        return VideoCapturer(activity, lensFacingVideo)
+        return VideoCapturer(activity.contentResolver, lensFacingVideo,
+            activity.preview_view.display.rotation, activity.mainExecutor)
     }
 
     fun startVideo() {
