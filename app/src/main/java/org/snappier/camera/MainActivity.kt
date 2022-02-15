@@ -100,6 +100,13 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (activeCamera is VideoCamera) {
+            videoCamera.turnFlashOn(options_bar.button_flash_toggle.getFlashMode())
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
@@ -222,7 +229,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     override fun onFlashToggled(flashMode: Int) {
         (photoCamera.capturer.getCapture() as ImageCapture).flashMode = flashMode
         if (activeCamera is VideoCamera) {
-            videoCamera.setFlash(flashMode)
+            videoCamera.turnFlashOn(flashMode)
         }
     }
 
@@ -249,6 +256,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             return
         }
 
+        val flashMode = options_bar.button_flash_toggle.getFlashMode()
+
         activeCamera = when (tab?.id) {
             Configuration.ID_PICTURE_CAMERA,
             Configuration.ID_BOKEH,
@@ -262,13 +271,11 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
                 Log.d(TAG, "Switch to video mode")
                 camera_capture_button.videoMode = true
                 // Switch the flash to off-mode if it's in auto-mode
-                val flashMode = options_bar.button_flash_toggle.getFlashMode()
                 if (flashMode == ImageCapture.FLASH_MODE_AUTO) {
                     options_bar.button_flash_toggle.toggleMode()
                 }
 
                 options_bar.button_flash_toggle.setFlashOptions(false /* triState */)
-                videoCamera.setFlash(flashMode)
                 videoCamera
             }
             else -> {
@@ -280,6 +287,11 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         camera_capture_button.refreshDrawableState()
         activeCamera.startCamera()
+
+        // TODO: do this once camera is no more null in Camera for both cameras
+        if (activeCamera is VideoCamera) {
+            videoCamera.turnFlashOn(flashMode)
+        }
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab?) {}

@@ -1,5 +1,6 @@
 package org.snappier.camera.camera
 
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,13 +18,12 @@ class VideoCamera(
     var recording: Boolean = false
         get() = (capturer as VideoCapturer).recording
 
-
     override fun buildCapturer(): Capturer {
         return VideoCapturer(activity.contentResolver, lensFacingVideo,
             activity.preview_view.display.rotation, activity.mainExecutor)
     }
 
-    fun setFlash(flashMode: Int) {
+    fun turnFlashOn(flashMode: Int) {
         camera?.cameraControl?.enableTorch(flashMode == ImageCapture.FLASH_MODE_ON)
     }
 

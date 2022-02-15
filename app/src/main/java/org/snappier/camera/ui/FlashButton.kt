@@ -7,7 +7,6 @@ import androidx.camera.core.ImageCapture
 import org.snappier.camera.R
 
 class FlashButton(context: Context, attrs: AttributeSet) : AppCompatImageButton(context, attrs) {
-
     private val triState = arrayOf(
         ImageCapture.FLASH_MODE_OFF,
         ImageCapture.FLASH_MODE_ON,
@@ -15,7 +14,7 @@ class FlashButton(context: Context, attrs: AttributeSet) : AppCompatImageButton(
     )
     private val onOff = arrayOf(ImageCapture.FLASH_MODE_OFF, ImageCapture.FLASH_MODE_ON)
     private var activeFlashOptions = triState
-    private var status = 0
+    var status = 0
 
     fun getFlashMode(): Int {
         return activeFlashOptions[status]
