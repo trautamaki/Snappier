@@ -65,9 +65,16 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="1dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="16dp"
+        app:tabGravity="center"
+        app:tabIndicatorAnimationMode="elastic"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:tabTextAppearance="@style/TextAppearance.ModeSelector"
+        app:tabSelectedTextColor="@color/tab_text_color"
+        app:tabIndicatorGravity="stretch"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorColor="@color/tab_background_selected"
         style="@style/Theme.Snappier.TabLayout"/>
 
     <ImageView
