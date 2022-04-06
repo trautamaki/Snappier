@@ -4,11 +4,11 @@
     <color name="icon_tint">@android:color/black</color>
     <color name="secondary_icon_tint">#E0E0E0</color>
     <color name="color_primary">#FFFFFF</color>
-    <color name="activity_bg">#212121</color>
+    <color name="activity_bg">#000000</color>
     <color name="activity_settings_bg">@android:color/white</color>
     <color name="tab_background">#202124</color>
     <color name="tab_background_selected">#535353</color>
 
     <color name="capture_button_video">#FF0000</color>
-    <color name="capture_button_normal">@color/accent</color>
+    <color name="capture_button_photo">#d0d9dd</color>
 </resources>

@@ -3,5 +3,5 @@
 
     <item android:color="@color/capture_button_video" app:video_mode="true" />
 
-    <item android:color="@color/accent" />
+    <item android:color="@color/capture_button_photo" />
 </selector>
