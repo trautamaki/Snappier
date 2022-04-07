@@ -5,6 +5,7 @@ import androidx.camera.core.AspectRatio
 class Configuration {
     companion object {
         const val KEY_CAPTURE_MODE = "capture_mode"
+        const val KEY_LAST_FILE_URI = "last_file_uri"
 
         const val DEFAULT_ASPECT_RATIO = AspectRatio.RATIO_4_3
         var ASPECT_RATIO = DEFAULT_ASPECT_RATIO

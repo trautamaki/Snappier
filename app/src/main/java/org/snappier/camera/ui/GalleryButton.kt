@@ -6,9 +6,11 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import android.view.View
 import android.util.Size
+import android.view.View
 import android.widget.ImageView
+import androidx.preference.PreferenceManager
+import org.snappier.camera.Configuration
 
 class GalleryButton(context: Context, attrs: AttributeSet) :
     ImageView(context, attrs),
@@ -19,11 +21,18 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
     init {
         setOnClickListener(this)
 
-        val packageManager = context.packageManager
-        val galleryPackage = getGalleryPackage(packageManager)
-        if (galleryPackage.isNotEmpty()) {
-            val icon: Drawable = packageManager.getApplicationIcon(galleryPackage)
-            setImageDrawable(icon)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val savedUri = prefs.getString(Configuration.KEY_LAST_FILE_URI, "")
+        if (savedUri != "") {
+            previousFile = Uri.parse(savedUri)
+            setNewFile(previousFile)
+        } else {
+            val packageManager = context.packageManager
+            val galleryPackage = getGalleryPackage(packageManager)
+            if (galleryPackage.isNotEmpty()) {
+                val icon: Drawable = packageManager.getApplicationIcon(galleryPackage)
+                setImageDrawable(icon)
+            }
         }
     }
 
@@ -35,7 +44,15 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
                 uri, Size(100,100), null)
 
             setImageBitmap(thumbnail)
+            saveLastFile()
         }
+    }
+
+    private fun saveLastFile() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = prefs.edit()
+        editor.putString(Configuration.KEY_LAST_FILE_URI, previousFile.toString())
+        editor.apply()
     }
 
     private fun getGalleryPackage(packageManager: PackageManager): String {
