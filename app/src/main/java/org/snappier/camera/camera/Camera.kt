@@ -20,13 +20,14 @@ abstract class Camera(
 
     abstract fun buildCapturer(): Capturer
 
-    fun startCamera() {
+    fun startCamera(capturerCallbackListener: Capturer.ICapturerCallback) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(activity.applicationContext)
 
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             capturer = buildCapturer()
+            capturer.listener = capturerCallbackListener
 
             try {
                 // Unbind use cases before rebinding

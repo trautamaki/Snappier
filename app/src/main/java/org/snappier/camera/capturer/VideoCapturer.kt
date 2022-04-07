@@ -71,6 +71,7 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
     @SuppressLint("RestrictedApi")
     override fun onVideoSaved(output: VideoCapture.OutputFileResults) {
         Log.d(MainActivity.TAG, "Video capture succeeded: ${output.savedUri}")
+        listener?.onFileSaved(output.savedUri)
     }
 
     @SuppressLint("RestrictedApi")

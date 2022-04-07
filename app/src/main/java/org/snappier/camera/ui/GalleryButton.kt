@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
 
@@ -11,22 +12,29 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
     com.google.android.material.floatingactionbutton.FloatingActionButton(context, attrs),
     View.OnClickListener {
 
-    private val galleryIntent: Intent
+    var previousFile: Uri? = null
 
     init {
         setOnClickListener(this)
-        galleryIntent = Intent(Intent.ACTION_DEFAULT)
-            .setType("image/*")
 
         val packageManager = context.packageManager
-        val galleryPackage = getPackageForGallery(packageManager)
+        val galleryPackage = getGalleryPackage(packageManager)
         if (galleryPackage.isNotEmpty()) {
             val icon: Drawable = packageManager.getApplicationIcon(galleryPackage)
             setImageDrawable(icon)
         }
     }
 
-    private fun getPackageForGallery(packageManager: PackageManager): String {
+    fun setNewFile(uri: Uri?) {
+        previousFile = uri
+
+        // TODO: Picture has to be resized
+        //setImageURI(previousPhotoFile?.toUri())
+    }
+
+    private fun getGalleryPackage(packageManager: PackageManager): String {
+        val galleryIntent = Intent(Intent.ACTION_DEFAULT)
+            .setType("image/*")
         val packages = packageManager.queryIntentActivities(galleryIntent, 0)
         for (res in packages) {
             return res.activityInfo.packageName
@@ -35,6 +43,20 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
     }
 
     override fun onClick(v: View?) {
-        context.startActivity(galleryIntent)
+        val intent = Intent()
+
+        if (previousFile != null) {
+            intent.action = Intent.ACTION_VIEW
+            intent.setDataAndType(previousFile, "image/*")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            context.startActivity(intent)
+
+            return
+        }
+
+        intent.action = Intent.ACTION_DEFAULT
+        intent.type = "image/*"
+        context.startActivity(intent)
     }
 }

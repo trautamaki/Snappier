@@ -53,6 +53,7 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
         Log.d(MainActivity.TAG, "Photo capture succeeded: ${output.savedUri}")
         activity.camera_capture_button.isEnabled = true
+        listener?.onFileSaved(output.savedUri)
     }
 
     override fun onError(exc: ImageCaptureException) {

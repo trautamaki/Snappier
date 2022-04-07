@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -25,9 +26,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.constraintlayout.widget.ConstraintLayout
+import org.snappier.camera.capturer.Capturer
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
-    SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener {
+    SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
+    Capturer.ICapturerCallback {
 
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
@@ -74,7 +77,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         // Request camera permissions
         if (allPermissionsGranted()) {
-            activeCamera.startCamera()
+            activeCamera.startCamera(this)
         } else {
             ActivityCompat.requestPermissions(
                     this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
@@ -108,7 +111,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                activeCamera.startCamera()
+                activeCamera.startCamera(this)
             } else {
                 Toast.makeText(this, getString(R.string.permissions_not_granted),
                         Toast.LENGTH_SHORT).show()
@@ -148,7 +151,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             photoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
         }
 
-        activeCamera.startCamera()
+        activeCamera.startCamera(this)
     }
 
     private fun fadeControls() {
@@ -226,14 +229,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     override fun onAspectRatioChanged(aspectRatio: Int) {
         Configuration.ASPECT_RATIO = aspectRatio
-        activeCamera.startCamera()
+        activeCamera.startCamera(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         if (key == Configuration.KEY_CAPTURE_MODE) {
             photoCamera.handleCaptureModeChange(sharedPreferences.getString(key, "0")!!.toInt())
             if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
-                activeCamera.startCamera()
+                activeCamera.startCamera(this)
             }
         }
     }
@@ -272,13 +275,17 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
 
         camera_capture_button.refreshDrawableState()
-        activeCamera.startCamera()
+        activeCamera.startCamera(this)
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
     override fun onTabReselected(tab: TabLayout.Tab?) {}
 
+    override fun onFileSaved(fileUri: Uri?) {
+        gallery_button.setNewFile(fileUri)
+    }
+    
     companion object {
         const val TAG = "Snappier"
         private const val REQUEST_CODE_PERMISSIONS = 10
