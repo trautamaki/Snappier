@@ -7,9 +7,11 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
+import android.util.Size
+import android.widget.ImageView
 
 class GalleryButton(context: Context, attrs: AttributeSet) :
-    com.google.android.material.floatingactionbutton.FloatingActionButton(context, attrs),
+    ImageView(context, attrs),
     View.OnClickListener {
 
     var previousFile: Uri? = null
@@ -28,8 +30,12 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
     fun setNewFile(uri: Uri?) {
         previousFile = uri
 
-        // TODO: Picture has to be resized
-        //setImageURI(previousPhotoFile?.toUri())
+        if (uri != null) {
+            val thumbnail = context.contentResolver.loadThumbnail(
+                uri, Size(100,100), null)
+
+            setImageBitmap(thumbnail)
+        }
     }
 
     private fun getGalleryPackage(packageManager: PackageManager): String {
@@ -39,6 +45,7 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
         for (res in packages) {
             return res.activityInfo.packageName
         }
+
         return ""
     }
 
