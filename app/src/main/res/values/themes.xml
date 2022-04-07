@@ -34,7 +34,7 @@
         <item name="android:layout_marginBottom">@dimen/camera_controls_bottom_margin</item>
         <item name="android:backgroundTint">@color/secondary_icon_tint</item>
         <item name="borderWidth">0dp</item>
-        <item name="fabCustomSize">50dp</item>
+        <item name="fabCustomSize">60dp</item>
         <item name="maxImageSize">24dp</item>
     </style>
 
