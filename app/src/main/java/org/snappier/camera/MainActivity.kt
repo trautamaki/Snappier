@@ -22,13 +22,14 @@ import org.snappier.camera.camera.PhotoCamera
 import org.snappier.camera.camera.VideoCamera
 import org.snappier.camera.capturer.Capturer
 import org.snappier.camera.ui.UIAnimator
+import org.snappier.camera.ui.GalleryButton
 import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
-    Capturer.ICapturerCallback {
+    Capturer.ICapturerCallback, View.OnClickListener {
 
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
@@ -80,9 +81,10 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             )
         }
 
-        // Set up the listener for take photo button
-        camera_capture_button.setOnClickListener { capture() }
-        camera_swap_button.setOnClickListener { swapCamera() }
+        camera_capture_button.setOnClickListener(this)
+        camera_swap_button.setOnClickListener(this)
+        options_bar.setOnClickListener(this)
+        gallery_button.setOnClickListener(this)
         preview_view.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -229,6 +231,16 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     override fun onFileSaved(fileUri: Uri?) {
         gallery_button.setNewFile(fileUri)
+    }
+
+    override fun onClick(v: View?) {
+        UIAnimator.unFadeControls()
+
+        when (v) {
+            camera_capture_button -> capture()
+            camera_swap_button -> swapCamera()
+            gallery_button -> (gallery_button as GalleryButton).onClick(v)
+        }
     }
 
     companion object {
