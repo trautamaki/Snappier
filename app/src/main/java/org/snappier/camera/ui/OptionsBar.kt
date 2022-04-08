@@ -60,4 +60,14 @@ class OptionsBar @JvmOverloads constructor(
             listener?.onAspectRatioChanged(button_aspect_ratio.getAspectRatio())
         }
     }
+
+    /**
+     * Enable/disable buttons in the options bar during video record.
+     *
+     * @param enable whether to enable or disable the buttons
+     */
+    fun enableOptionsForVideoRecord(enable: Boolean) {
+        button_aspect_ratio.isEnabled = enable
+        button_settings.isEnabled = enable
+    }
 }

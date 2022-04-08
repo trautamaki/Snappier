@@ -130,6 +130,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
                 videoCamera.stopVideo()
                 camera_capture_button.recording = false
                 tabTouchables?.forEach { it.isEnabled = true }
+                options_bar.enableOptionsForVideoRecord(true)
                 UIAnimator.animateReveal(camera_swap_button, 100, View.VISIBLE)
                 UIAnimator.animateReveal(gallery_button_wrapper, 100, View.VISIBLE)
                 UIAnimator.animateReveal(gallery_button, 100, View.VISIBLE)
@@ -137,6 +138,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
                 videoCamera.startVideo()
                 camera_capture_button.recording = true
                 tabTouchables?.forEach { it.isEnabled = false }
+                options_bar.enableOptionsForVideoRecord(false)
                 UIAnimator.animateHide(camera_swap_button, 0f, 100, View.INVISIBLE)
                 UIAnimator.animateHide(gallery_button_wrapper, 0f, 100, View.INVISIBLE)
                 UIAnimator.animateHide(gallery_button, 0f, 100, View.INVISIBLE)
