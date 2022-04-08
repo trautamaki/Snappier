@@ -1,6 +1,7 @@
 package org.snappier.camera.capturer
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.provider.MediaStore
 import android.util.Log
@@ -10,11 +11,16 @@ import androidx.camera.core.UseCase
 import androidx.camera.core.VideoCapture
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.Executor
 
-class VideoCapturer(private val activity: MainActivity, private val lensFacing: Int) :
-        Capturer(activity),
-        VideoCapture.OnVideoSavedCallback {
+class VideoCapturer(
+    executor: Executor,
+    private val contentResolver: ContentResolver,
+    private val rotation: Int,
+    private val lensFacing: Int
+) :
+    Capturer(executor),
+    VideoCapture.OnVideoSavedCallback {
 
     lateinit var videoCapture: VideoCapture
 
@@ -32,7 +38,7 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
                 .requireLensFacing(lensFacing).build()
 
         videoCapture = VideoCapture.Builder()
-                .setTargetRotation(activity.preview_view.display.rotation)
+                .setTargetRotation(rotation)
                 .setCameraSelector(cameraSelector)
                 .build()
     }
@@ -47,7 +53,7 @@ class VideoCapturer(private val activity: MainActivity, private val lensFacing: 
         }
 
         val outputFileOptions = VideoCapture.OutputFileOptions.Builder(
-                activity.contentResolver,
+                contentResolver,
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 contentValues
         ).build()

@@ -1,5 +1,6 @@
 package org.snappier.camera.capturer
 
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.provider.MediaStore
 import android.util.Log
@@ -9,10 +10,14 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.UseCase
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.Executor
 
-class ImageCapturer(private val activity: MainActivity, private val captureMode: Int) :
-    Capturer(activity), ImageCapture.OnImageSavedCallback {
+class ImageCapturer(
+    executor: Executor,
+    private val contentResolver: ContentResolver,
+    private val captureMode: Int
+) :
+    Capturer(executor), ImageCapture.OnImageSavedCallback {
 
     lateinit var imageCapture: ImageCapture
 
@@ -36,7 +41,7 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
         }
 
         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
-                activity.contentResolver,
+                contentResolver,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues
         ).build()
@@ -45,18 +50,15 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
         imageCapture.takePicture(
                 outputFileOptions, executor, this
         )
-        activity.camera_capture_button.isEnabled = false
     }
 
     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
         Log.d(MainActivity.TAG, "Photo capture succeeded: ${output.savedUri}")
-        activity.camera_capture_button.isEnabled = true
         listener?.onFileSaved(output.savedUri)
     }
 
     override fun onError(exc: ImageCaptureException) {
         Log.e(MainActivity.TAG, "Photo capture failed: ${exc.message}", exc)
-        activity.camera_capture_button.isEnabled = true
     }
 
     override fun getCapture(): UseCase {

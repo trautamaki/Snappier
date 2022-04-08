@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         UIAnimator.unFadeControls()
 
         if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
+            camera_capture_button.isEnabled = false
             photoCamera.takePhoto()
             UIAnimator.shutterAnimation(shutter, preview_view)
         } else if (activeCamera.cameraModeId == Configuration.ID_VIDEO_CAMERA) {
@@ -233,6 +234,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     override fun onFileSaved(fileUri: Uri?) {
         gallery_button.setNewFile(fileUri)
+        camera_capture_button.isEnabled = true
     }
 
     override fun onClick(v: View?) {
