@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         camera_capture_button to 0.5f,
         camera_swap_button to 0.3f,
         tab_layout to 0.5f,
-        gallery_button to 0.3f,
+        gallery_button_wrapper to 0.3f,
     ) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +86,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         preview_view.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    UIAnimator.fadeControls(fadeableViews, preview_view, options_bar)
+                    UIAnimator.fadeControls(fadeableViews, preview_view, options_bar,
+                            gallery_button, gallery_button_wrapper)
                 }
             }
 

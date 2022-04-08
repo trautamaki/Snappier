@@ -13,13 +13,17 @@ class UIAnimator {
         /**
          * Fade controls that overlap camera preview.
          * Options bar requires seperate handling because it is placed in the top of the screen.
+         * Gallery button requires seperate handling because it's coordinates are inside the
+         * @param gallery_button_wrapper .
          *
          * @param fadeableViews views that could be faded and their end opacity
          * @param preview_view the camera preview
          * @param options_bar options bar view
+         * @param gallery_button the gallery button
+         * @param gallery_button_wrapper the outer view containing gallery button
          */
         fun fadeControls(fadeableViews: HashMap<View, Float>, preview_view: View,
-                         options_bar: View) {
+                         options_bar: View, gallery_button: View, gallery_button_wrapper: View) {
             if (viewsFaded) {
                 return
             }
@@ -33,6 +37,10 @@ class UIAnimator {
                         viewsToFade[view] = fadeAmount
                     }
                 } else if (preview_view.y + preview_view.height > view.y) {
+                    if (view == gallery_button_wrapper) {
+                        viewsToFade[gallery_button] = fadeAmount
+                    }
+
                     viewsToFade[view] = fadeAmount
                 }
             }
