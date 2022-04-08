@@ -1,8 +1,6 @@
 package org.snappier.camera
 
 import android.Manifest
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -23,10 +21,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.snappier.camera.camera.PhotoCamera
 import org.snappier.camera.camera.VideoCamera
 import org.snappier.camera.capturer.Capturer
+import org.snappier.camera.ui.UIAnimator
 import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import androidx.constraintlayout.widget.ConstraintLayout
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
@@ -39,7 +37,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
-    private var viewsFaded: Boolean = false
     private val fadeableViews : HashMap<View, Float> by lazy { hashMapOf(
         options_bar to 0.3f,
         camera_capture_button to 0.5f,
@@ -47,7 +44,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         tab_layout to 0.5f,
         gallery_button to 0.3f,
     ) }
-    private val viewsToFade : HashMap<View, Float> by lazy { hashMapOf()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +86,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         preview_view.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    fadeControls()
+                    UIAnimator.fadeControls(fadeableViews, preview_view, options_bar)
                 }
             }
 
@@ -121,26 +117,26 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     private fun capture() {
-        unFadeControls()
+        UIAnimator.unFadeControls()
 
         if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
             photoCamera.takePhoto()
-            shutterAnimation()
+            UIAnimator.shutterAnimation(shutter, preview_view)
         } else if (activeCamera.cameraModeId == Configuration.ID_VIDEO_CAMERA) {
             if (videoCamera.recording) {
                 videoCamera.stopVideo()
                 camera_capture_button.recording = false
                 tabTouchables?.forEach { it.isEnabled = true }
-                animateReveal(camera_swap_button, 100, View.VISIBLE)
-                animateReveal(gallery_button_wrapper, 100, View.VISIBLE)
-                animateReveal(gallery_button, 100, View.VISIBLE)
+                UIAnimator.animateReveal(camera_swap_button, 100, View.VISIBLE)
+                UIAnimator.animateReveal(gallery_button_wrapper, 100, View.VISIBLE)
+                UIAnimator.animateReveal(gallery_button, 100, View.VISIBLE)
             } else {
                 videoCamera.startVideo()
                 camera_capture_button.recording = true
                 tabTouchables?.forEach { it.isEnabled = false }
-                animateHide(camera_swap_button, 0f, 100, View.INVISIBLE)
-                animateHide(gallery_button_wrapper, 0f, 100, View.INVISIBLE)
-                animateHide(gallery_button, 0f, 100, View.INVISIBLE)
+                UIAnimator.animateHide(camera_swap_button, 0f, 100, View.INVISIBLE)
+                UIAnimator.animateHide(gallery_button_wrapper, 0f, 100, View.INVISIBLE)
+                UIAnimator.animateHide(gallery_button, 0f, 100, View.INVISIBLE)
             }
         }
     }
@@ -162,96 +158,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         activeCamera.startCamera(this)
     }
 
-    private fun fadeControls() {
-        if (viewsFaded) {
-            return
-        }
-
-        viewsToFade.clear()
-
-        // Fade views if they overlap with the camera preview.
-        for ((view, fadeAmount) in fadeableViews) {
-            if (view == options_bar) {
-                if (preview_view.y < options_bar.y + view.height) {
-                    viewsToFade[view] = fadeAmount
-                }
-            } else if (preview_view.y + preview_view.height > view.y) {
-                viewsToFade[view] = fadeAmount
-            }
-        }
-
-        for ((key, value) in viewsToFade) {
-            animateHide(key, value, 350, View.VISIBLE)
-        }
-
-        viewsFaded = true
-    }
-
-    private fun unFadeControls() {
-        if (!viewsFaded) {
-            return
-        }
-
-        for ((key, _) in viewsToFade) {
-            animateReveal(key, 100, View.VISIBLE)
-        }
-
-        viewsFaded = false
-    }
-
-    private fun animateHide(view: View, amount: Float, duration: Long, endVisibility: Int) {
-        view.animate()
-            .setDuration(duration)
-            .alpha(amount)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    view.visibility = endVisibility
-                }
-            })
-            .start()
-    }
-
-    private fun animateReveal(view: View, duration: Long, endVisibility: Int) {
-        view.animate()
-            .setDuration(duration)
-            .alpha(1.0f)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    view.visibility = endVisibility
-                }
-            })
-            .start()
-    }
-
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
                 baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun shutterAnimation() {
-        // Make sure shutter view size is same as preview view
-        val previewParams = preview_view.layoutParams as ConstraintLayout.LayoutParams
-        val shutterParams = shutter.layoutParams as ConstraintLayout.LayoutParams
-        shutterParams.topToBottom = previewParams.topToBottom
-        shutterParams.topToTop = previewParams.topToTop
-        shutterParams.dimensionRatio = previewParams.dimensionRatio
-        shutter.layoutParams = shutterParams
-
-        shutter.visibility = View.VISIBLE
-        shutter.animate()
-            .setDuration(100)
-            .alpha(0f)
-            .setStartDelay(50)
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    shutter.visibility = View.INVISIBLE
-                    shutter.alpha = 1f
-                }
-            })
-            .start()
     }
 
     override fun onFlashToggled(flashMode: Int) {
@@ -259,7 +168,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onOptionsBarClick() {
-        unFadeControls()
+        UIAnimator.unFadeControls()
     }
 
     override fun onAspectRatioChanged(aspectRatio: Int) {
