@@ -39,12 +39,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     private var viewsFaded: Boolean = false
-    private val viewsToFade by lazy { hashMapOf(
+    private val fadeableViews : HashMap<View, Float> by lazy { hashMapOf(
         options_bar to 0.3f,
         camera_capture_button to 0.5f,
         camera_swap_button to 0.3f,
-        tab_layout to 0.5f
+        tab_layout to 0.5f,
+        gallery_button to 0.3f,
     ) }
+    private val viewsToFade : HashMap<View, Float> by lazy { hashMapOf()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,10 +158,17 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             return
         }
 
-        // Fade views if they overlap with capture button or options bar.
-        if (preview_view.y + preview_view.height < camera_capture_button.y ||
-            preview_view.y > options_bar.y + options_bar.height) {
-            return
+        viewsToFade.clear()
+
+        // Fade views if they overlap with the camera preview.
+        for ((view, fadeAmount) in fadeableViews) {
+            if (view == options_bar) {
+                if (preview_view.y < options_bar.y + view.height) {
+                    viewsToFade[view] = fadeAmount
+                }
+            } else if (preview_view.y + preview_view.height > view.y) {
+                viewsToFade[view] = fadeAmount
+            }
         }
 
         for ((key, value) in viewsToFade) {
