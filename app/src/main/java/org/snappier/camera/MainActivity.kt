@@ -17,11 +17,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.activity_main.*
 import org.snappier.camera.camera.PhotoCamera
 import org.snappier.camera.camera.VideoCamera
 import org.snappier.camera.capturer.Capturer
 import org.snappier.camera.ui.UIAnimator
+import org.snappier.camera.databinding.ActivityMainBinding
 import org.snappier.camera.ui.GalleryButton
 import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import java.util.concurrent.ExecutorService
@@ -31,24 +31,27 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
     Capturer.ICapturerCallback, View.OnClickListener {
 
+    lateinit var binding: ActivityMainBinding
+
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
     private lateinit var activeCamera: org.snappier.camera.camera.Camera
-    private val tabTouchables by lazy { tab_layout.touchables }
 
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
-
+    private val tabTouchables by lazy { binding.tabLayout.touchables }
     private val fadeableViews : HashMap<View, Float> by lazy { hashMapOf(
-        options_bar to 0.3f,
-        camera_capture_button to 0.5f,
-        camera_swap_button to 0.3f,
-        tab_layout to 0.5f,
-        gallery_button_wrapper to 0.3f,
+        binding.optionsBar to 0.3f,
+        binding.cameraCaptureButton to 0.5f,
+        binding.cameraSwapButton to 0.3f,
+        binding.tabLayout to 0.5f,
+        binding.galleryButtonWrapper to 0.3f,
     ) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // Initialize supported camera modes
         for (mode: Int in Configuration.supportedCameraModes) {
@@ -62,13 +65,13 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         val cameraModes = resources.getStringArray(R.array.camera_modes)
         Configuration.supportedCameraModes.forEachIndexed { i, elem ->
-            tab_layout.addTab(tab_layout.newTab()
+            binding.tabLayout.addTab(binding.tabLayout.newTab()
                 .setText(cameraModes[elem])
                 .setId(i))
         }
 
-        options_bar.setOptionsBarListener(this)
-        tab_layout.setOnTabSelectedListener(this)
+        binding.optionsBar.setOptionsBarListener(this)
+        binding.tabLayout.setOnTabSelectedListener(this)
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
 
@@ -81,15 +84,15 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             )
         }
 
-        camera_capture_button.setOnClickListener(this)
-        camera_swap_button.setOnClickListener(this)
-        options_bar.setOnClickListener(this)
-        gallery_button.setOnClickListener(this)
-        preview_view.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+        binding.cameraCaptureButton.setOnClickListener(this)
+        binding.cameraSwapButton.setOnClickListener(this)
+        binding.optionsBar.setOnClickListener(this)
+        binding.galleryButton.setOnClickListener(this)
+        binding.previewView.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    UIAnimator.fadeControls(fadeableViews, preview_view, options_bar,
-                            gallery_button, gallery_button_wrapper)
+                    UIAnimator.fadeControls(fadeableViews, binding.previewView, binding.optionsBar,
+                        binding.galleryButton, binding.galleryButtonWrapper)
                 }
             }
 
@@ -123,26 +126,26 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         UIAnimator.unFadeControls()
 
         if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
-            camera_capture_button.isClickable = false
+            binding.cameraCaptureButton.isClickable = false
             photoCamera.takePhoto()
-            UIAnimator.shutterAnimation(shutter, preview_view)
+            UIAnimator.shutterAnimation(binding.shutter, binding.previewView)
         } else if (activeCamera.cameraModeId == Configuration.ID_VIDEO_CAMERA) {
             if (videoCamera.recording) {
                 videoCamera.stopVideo()
-                camera_capture_button.recording = false
+                binding.cameraCaptureButton.recording = false
                 tabTouchables?.forEach { it.isEnabled = true }
-                options_bar.enableOptionsForVideoRecord(true)
-                UIAnimator.animateReveal(camera_swap_button, 100, View.VISIBLE)
-                UIAnimator.animateReveal(gallery_button_wrapper, 100, View.VISIBLE)
-                UIAnimator.animateReveal(gallery_button, 100, View.VISIBLE)
+                binding.optionsBar.enableOptionsForVideoRecord(true)
+                UIAnimator.animateReveal(binding.cameraSwapButton, 100, View.VISIBLE)
+                UIAnimator.animateReveal(binding.galleryButtonWrapper, 100, View.VISIBLE)
+                UIAnimator.animateReveal(binding.galleryButton, 100, View.VISIBLE)
             } else {
                 videoCamera.startVideo()
-                camera_capture_button.recording = true
+                binding.cameraCaptureButton.recording = true
                 tabTouchables?.forEach { it.isEnabled = false }
-                options_bar.enableOptionsForVideoRecord(false)
-                UIAnimator.animateHide(camera_swap_button, 0f, 100, View.INVISIBLE)
-                UIAnimator.animateHide(gallery_button_wrapper, 0f, 100, View.INVISIBLE)
-                UIAnimator.animateHide(gallery_button, 0f, 100, View.INVISIBLE)
+                binding.optionsBar.enableOptionsForVideoRecord(false)
+                UIAnimator.animateHide(binding.cameraSwapButton, 0f, 100, View.INVISIBLE)
+                UIAnimator.animateHide(binding.galleryButtonWrapper, 0f, 100, View.INVISIBLE)
+                UIAnimator.animateHide(binding.galleryButton, 0f, 100, View.INVISIBLE)
             }
         }
     }
@@ -150,12 +153,12 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     @SuppressLint("RestrictedApi")
     private fun swapCamera() {
         if (activeCamera.lensFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
-            camera_swap_button.setImageResource(R.drawable.ic_camera_front)
+            binding.cameraSwapButton.setImageResource(R.drawable.ic_camera_front)
             videoCamera.lensFacingVideo = CameraSelector.LENS_FACING_BACK
             videoCamera.lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
             photoCamera.lensFacing = CameraSelector.DEFAULT_BACK_CAMERA
         } else {
-            camera_swap_button.setImageResource(R.drawable.ic_camera_rear)
+            binding.cameraSwapButton.setImageResource(R.drawable.ic_camera_rear)
             videoCamera.lensFacingVideo = CameraSelector.LENS_FACING_FRONT
             videoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
             photoCamera.lensFacing = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -199,32 +202,32 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         activeCamera = when (tab?.id) {
             Configuration.ID_PICTURE_CAMERA -> {
                 Log.d(TAG, "Switch to photo mode")
-                camera_capture_button.videoMode = false
+                binding.cameraCaptureButton.videoMode = false
                 photoCamera
             }
             Configuration.ID_VIDEO_CAMERA -> {
                 Log.d(TAG, "Switch to video mode")
-                camera_capture_button.videoMode = true
+                binding.cameraCaptureButton.videoMode = true
                 videoCamera
             }
             Configuration.ID_BOKEH -> {
                 Log.d(TAG, "Switch to bokeh mode")
-                camera_capture_button.videoMode = false
+                binding.cameraCaptureButton.videoMode = false
                 videoCamera
             }
             Configuration.ID_NIGHT -> {
                 Log.d(TAG, "Switch to night mode")
-                camera_capture_button.videoMode = false
+                binding.cameraCaptureButton.videoMode = false
                 videoCamera
             }
             else -> {
                 Log.e(TAG, "Unknown tab. Using photo camera.")
-                camera_capture_button.videoMode = false
+                binding.cameraCaptureButton.videoMode = false
                 photoCamera
             }
         }
 
-        camera_capture_button.refreshDrawableState()
+        binding.cameraCaptureButton.refreshDrawableState()
         activeCamera.startCamera(this)
     }
 
@@ -233,17 +236,17 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     override fun onTabReselected(tab: TabLayout.Tab?) {}
 
     override fun onFileSaved(fileUri: Uri?) {
-        gallery_button.setNewFile(fileUri)
-        camera_capture_button.isClickable = true
+        binding.galleryButton.setNewFile(fileUri)
+        binding.cameraCaptureButton.isClickable = true
     }
 
     override fun onClick(v: View?) {
         UIAnimator.unFadeControls()
 
         when (v) {
-            camera_capture_button -> capture()
-            camera_swap_button -> swapCamera()
-            gallery_button -> (gallery_button as GalleryButton).onClick(v)
+            binding.cameraCaptureButton -> capture()
+            binding.cameraSwapButton -> swapCamera()
+            binding.galleryButton -> (binding.galleryButton as GalleryButton).onClick(v)
         }
     }
 

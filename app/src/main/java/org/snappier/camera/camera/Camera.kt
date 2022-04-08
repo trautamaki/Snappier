@@ -8,7 +8,6 @@ import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
 import org.snappier.camera.ViewFinder
 import org.snappier.camera.capturer.Capturer
-import kotlinx.android.synthetic.main.activity_main.*
 
 abstract class Camera(
     private val activity: MainActivity) {
@@ -34,14 +33,14 @@ abstract class Camera(
                 cameraProvider.unbindAll()
 
                 // Build viewfinder
-                viewFinder = ViewFinder(activity, activity.preview_view)
+                viewFinder = ViewFinder(activity, activity.binding.previewView)
 
                 // Bind use cases to camera
                 val camera = cameraProvider.bindToLifecycle(
                     activity, lensFacing, viewFinder.preview, capturer.getCapture()
                 )
 
-                activity.options_bar.updateOptions(camera.cameraInfo.hasFlashUnit())
+                activity.binding.optionsBar.updateOptions(camera.cameraInfo.hasFlashUnit())
                 viewFinder.camera = camera
 
             } catch (exc: Exception) {

@@ -12,7 +12,6 @@ import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.Preview
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
-import kotlinx.android.synthetic.main.activity_main.*
 
 class ViewFinder(private val activity: MainActivity, private val previewView: PreviewView) {
 
@@ -96,12 +95,12 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
         if (Configuration.ASPECT_RATIO == AspectRatio.RATIO_16_9) {
             // Place preview to top of screen
             params.topToBottom = ConstraintLayout.LayoutParams.UNSET
-            params.topToTop = activity.main_layout.id
+            params.topToTop = activity.binding.mainLayout.id
             params.dimensionRatio = Configuration.getAspectString(Configuration.ASPECT_RATIO)
         } else if (Configuration.ASPECT_RATIO == AspectRatio.RATIO_4_3) {
             // Place preview to bottom of options bar
             params.topToTop = ConstraintLayout.LayoutParams.UNSET
-            params.topToBottom = activity.options_bar.id
+            params.topToBottom = activity.binding.optionsBar.id
             params.dimensionRatio = Configuration.getAspectString(Configuration.ASPECT_RATIO)
         }
 
@@ -110,7 +109,7 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
 
     private fun showFocusRing(x: Float, y: Float) {
         // Get the focus ring
-        val focusRing = activity.focusRing
+        val focusRing = activity.binding.focusRing
 
         // Show the focus ring on touch position
         val width = focusRing.width.toFloat()

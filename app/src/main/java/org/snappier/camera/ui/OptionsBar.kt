@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import org.snappier.camera.R
-import kotlinx.android.synthetic.main.options_bar.view.*
 
 import org.snappier.camera.SettingsActivity
 
 import android.content.Intent
+import org.snappier.camera.databinding.OptionsBarBinding
 
 class OptionsBar @JvmOverloads constructor(
         context: Context,
@@ -27,13 +27,13 @@ class OptionsBar @JvmOverloads constructor(
 
     var listener: IOptionsBar? = null
 
-    init {
-        LayoutInflater.from(context)
-                .inflate(R.layout.options_bar, this, true)
+    private var binding: OptionsBarBinding =
+        OptionsBarBinding.inflate(LayoutInflater.from(context), this, true)
 
-        button_flash_toggle.setOnClickListener(this)
-        button_settings.setOnClickListener(this)
-        button_aspect_ratio.setOnClickListener(this)
+    init {
+        binding.buttonFlashToggle.setOnClickListener(this)
+        binding.buttonSettings.setOnClickListener(this)
+        binding.buttonAspectRatio.setOnClickListener(this)
     }
 
     fun setOptionsBarListener(listener: IOptionsBar) {
@@ -42,22 +42,22 @@ class OptionsBar @JvmOverloads constructor(
 
     fun updateOptions(hasFlashUnit: Boolean) {
         if (!hasFlashUnit) {
-            button_flash_toggle.visibility = View.GONE
+            binding.buttonFlashToggle.visibility = View.GONE
         } else {
-            button_flash_toggle.visibility = View.VISIBLE
+            binding.buttonFlashToggle.visibility = View.VISIBLE
         }
     }
 
     override fun onClick(v: View?) {
         listener?.onOptionsBarClick()
-        if (v == button_flash_toggle) {
-            button_flash_toggle.toggleMode()
-            listener?.onFlashToggled(button_flash_toggle.getFlashMode())
-        } else if (v == button_settings) {
+        if (v == binding.buttonFlashToggle) {
+            binding.buttonFlashToggle.toggleMode()
+            listener?.onFlashToggled(binding.buttonFlashToggle.getFlashMode())
+        } else if (v == binding.buttonFlashToggle) {
             context.startActivity(Intent(context, SettingsActivity::class.java))
-        } else if (v == button_aspect_ratio) {
-            button_aspect_ratio.toggleAspectRatio()
-            listener?.onAspectRatioChanged(button_aspect_ratio.getAspectRatio())
+        } else if (v == binding.buttonAspectRatio) {
+            binding.buttonAspectRatio.toggleAspectRatio()
+            listener?.onAspectRatioChanged(binding.buttonAspectRatio.getAspectRatio())
         }
     }
 
@@ -67,7 +67,7 @@ class OptionsBar @JvmOverloads constructor(
      * @param enable whether to enable or disable the buttons
      */
     fun enableOptionsForVideoRecord(enable: Boolean) {
-        button_aspect_ratio.isEnabled = enable
-        button_settings.isEnabled = enable
+        binding.buttonAspectRatio.isEnabled = enable
+        binding.buttonSettings.isEnabled = enable
     }
 }

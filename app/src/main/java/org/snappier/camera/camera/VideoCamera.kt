@@ -1,7 +1,6 @@
 package org.snappier.camera.camera
 
 import androidx.camera.core.CameraSelector
-import kotlinx.android.synthetic.main.activity_main.*
 import androidx.core.content.ContextCompat
 import org.snappier.camera.Configuration
 import org.snappier.camera.MainActivity
@@ -20,7 +19,7 @@ class VideoCamera(private val activity: MainActivity) : Camera(activity) {
         return VideoCapturer(
             ContextCompat.getMainExecutor(activity),
             activity.contentResolver,
-            activity.preview_view.display.rotation,
+            activity.binding.previewView.display.rotation,
             lensFacingVideo
         )
     }
