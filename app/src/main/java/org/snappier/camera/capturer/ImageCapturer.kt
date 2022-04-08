@@ -28,8 +28,6 @@ class ImageCapturer(private val activity: MainActivity, private val captureMode:
     }
 
     fun takePhoto() {
-        val imageCapture = imageCapture ?: return
-
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileFormat)
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, createFileName(fileFormat))

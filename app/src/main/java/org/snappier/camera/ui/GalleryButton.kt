@@ -1,5 +1,6 @@
 package org.snappier.camera.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import androidx.preference.PreferenceManager
 import org.snappier.camera.Configuration
 
+@SuppressLint("AppCompatCustomView")
 class GalleryButton(context: Context, attrs: AttributeSet) :
     ImageView(context, attrs),
     View.OnClickListener {
@@ -72,7 +74,7 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
         if (previousFile != null) {
             intent.action = Intent.ACTION_VIEW
             intent.setDataAndType(previousFile, "image/*")
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
             context.startActivity(intent)
 

@@ -13,14 +13,14 @@ class CaptureButton(context: Context, attrs: AttributeSet) :
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 2)
         if (recording) {
-            mergeDrawableStates(drawableState, STATE_RECORDING);
+            mergeDrawableStates(drawableState, STATE_RECORDING)
         }
 
         if (videoMode) {
-            mergeDrawableStates(drawableState, STATE_VIDEO_MODE);
+            mergeDrawableStates(drawableState, STATE_VIDEO_MODE)
         }
 
-        return drawableState;
+        return drawableState
     }
 
     companion object {

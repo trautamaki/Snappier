@@ -36,9 +36,6 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private lateinit var videoCamera: VideoCamera
     private lateinit var activeCamera: org.snappier.camera.camera.Camera
 
-    private var captureMode: Int = ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
-    private var cameraMode: Int = 0
-
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     private var viewsFaded: Boolean = false
@@ -56,8 +53,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         // Initialize supported camera modes
         for (mode: Int in Configuration.supportedCameraModes) {
             when (mode) {
-                0 -> photoCamera = PhotoCamera(this)
-                1 -> videoCamera = VideoCamera(this)
+                Configuration.ID_PICTURE_CAMERA -> photoCamera = PhotoCamera(this)
+                Configuration.ID_VIDEO_CAMERA -> videoCamera = VideoCamera(this)
             }
         }
 
@@ -123,10 +120,10 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private fun capture() {
         unFadeControls()
 
-        if (activeCamera.cameraModeId == 0) {
+        if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
             photoCamera.takePhoto()
             shutterAnimation()
-        } else if (activeCamera.cameraModeId == 1) {
+        } else if (activeCamera.cameraModeId == Configuration.ID_VIDEO_CAMERA) {
             if (videoCamera.recording) {
                 videoCamera.stopVideo()
                 camera_capture_button.recording = false
@@ -285,7 +282,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     override fun onFileSaved(fileUri: Uri?) {
         gallery_button.setNewFile(fileUri)
     }
-    
+
     companion object {
         const val TAG = "Snappier"
         private const val REQUEST_CODE_PERMISSIONS = 10

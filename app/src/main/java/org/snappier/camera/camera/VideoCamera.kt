@@ -6,8 +6,7 @@ import org.snappier.camera.MainActivity
 import org.snappier.camera.capturer.Capturer
 import org.snappier.camera.capturer.VideoCapturer
 
-class VideoCamera(
-        private val activity: MainActivity) : Camera(activity) {
+class VideoCamera(private val activity: MainActivity) : Camera(activity) {
     override var cameraModeId = Configuration.ID_VIDEO_CAMERA
     var lensFacingVideo: Int = CameraSelector.LENS_FACING_BACK
 

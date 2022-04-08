@@ -33,8 +33,8 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
         }
 
         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            zoomInProgress = true;
-            return super.onScaleBegin(detector);
+            zoomInProgress = true
+            return super.onScaleBegin(detector)
         }
 
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
@@ -109,29 +109,29 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     }
 
     private fun showFocusRing(x: Float, y: Float) {
-        //Get the focus ring
+        // Get the focus ring
         val focusRing = activity.focusRing
 
-        //Show the focus ring on touch position
+        // Show the focus ring on touch position
         val width = focusRing.width.toFloat()
         focusRing.x = x - width / 2
         focusRing.y = y + previewView.y - width / 2
         focusRing.visibility = View.VISIBLE
         focusRing.alpha = 1f
 
-        //Animate fade out
+        // Animate fade out
         focusRing.animate()
             .setStartDelay(350)
             .setDuration(350)
             .alpha(0f)
             .setListener(object : AnimatorListenerAdapter() {
-
                 var isCancelled = false
 
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
-                    if (!isCancelled)
+                    if (!isCancelled) {
                         focusRing.visibility = View.INVISIBLE
+                    }
                 }
 
                 override fun onAnimationCancel(animation: Animator?) {
