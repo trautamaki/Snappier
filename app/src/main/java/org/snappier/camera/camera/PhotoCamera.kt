@@ -23,7 +23,7 @@ class PhotoCamera(
         this.captureMode = captureMode
     }
 
-    fun takePhoto() {
-        (capturer as ImageCapturer).takePhoto()
+    fun takePhoto(orientation: Int) {
+        (capturer as ImageCapturer).takePhoto(orientation)
     }
 }

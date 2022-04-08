@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -23,6 +24,8 @@ import org.snappier.camera.capturer.Capturer
 import org.snappier.camera.ui.UIAnimator
 import org.snappier.camera.databinding.ActivityMainBinding
 import org.snappier.camera.ui.OptionsBar.IOptionsBar
+import org.snappier.camera.utils.OrientationManagerImpl
+import org.snappier.camera.utils.Util
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -35,6 +38,9 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
     private lateinit var activeCamera: org.snappier.camera.camera.Camera
+    private val orientationManager: OrientationManagerImpl by lazy {
+        OrientationManagerImpl(this, Handler())
+    }
 
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val tabTouchables by lazy { binding.tabLayout.touchables }
@@ -105,6 +111,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             activeCamera.viewFinder.onTouch(motionEvent)
             return@OnTouchListener true
         })
+
+        orientationManager.resume()
     }
 
     override fun onDestroy() {
@@ -135,7 +143,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         if (activeCamera.cameraModeId == Configuration.ID_PICTURE_CAMERA) {
             binding.cameraCaptureButton.isClickable = false
-            photoCamera.takePhoto()
+            photoCamera.takePhoto(
+                    Util.convertDeviceOrientation(orientationManager.deviceOrientation))
             UIAnimator.shutterAnimation(binding.shutter, binding.previewView)
         } else if (activeCamera.cameraModeId == Configuration.ID_VIDEO_CAMERA) {
             if (videoCamera.recording) {

@@ -32,7 +32,7 @@ class ImageCapturer(
                 .build()
     }
 
-    fun takePhoto() {
+    fun takePhoto(orientation: Int) {
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileFormat)
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, createFileName(fileFormat))
@@ -45,6 +45,9 @@ class ImageCapturer(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 contentValues
         ).build()
+
+        // Set the orientation
+        imageCapture.targetRotation = orientation
 
         // Set up image capture listener, which is triggered after photo has been taken
         imageCapture.takePicture(
