@@ -10,7 +10,8 @@ import org.snappier.camera.ViewFinder
 import org.snappier.camera.capturer.Capturer
 
 abstract class Camera(
-    private val activity: MainActivity) {
+    private val activity: MainActivity
+) {
     open var cameraModeId = Configuration.ID_PICTURE_CAMERA
 
     var lensFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA

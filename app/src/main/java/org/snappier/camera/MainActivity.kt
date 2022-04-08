@@ -22,14 +22,13 @@ import org.snappier.camera.camera.VideoCamera
 import org.snappier.camera.capturer.Capturer
 import org.snappier.camera.ui.UIAnimator
 import org.snappier.camera.databinding.ActivityMainBinding
-import org.snappier.camera.ui.GalleryButton
 import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
-    SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
-    Capturer.ICapturerCallback, View.OnClickListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
+        Capturer.ICapturerCallback, View.OnClickListener {
 
     lateinit var binding: ActivityMainBinding
 
@@ -39,13 +38,15 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val tabTouchables by lazy { binding.tabLayout.touchables }
-    private val fadeableViews : HashMap<View, Float> by lazy { hashMapOf(
-        binding.optionsBar to 0.3f,
-        binding.cameraCaptureButton to 0.5f,
-        binding.cameraSwapButton to 0.3f,
-        binding.tabLayout to 0.5f,
-        binding.galleryButtonWrapper to 0.3f,
-    ) }
+    private val fadeableViews: HashMap<View, Float> by lazy {
+        hashMapOf(
+                binding.optionsBar to 0.3f,
+                binding.cameraCaptureButton to 0.5f,
+                binding.cameraSwapButton to 0.3f,
+                binding.tabLayout to 0.5f,
+                binding.galleryButtonWrapper to 0.3f,
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,15 +66,17 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
         val cameraModes = resources.getStringArray(R.array.camera_modes)
         Configuration.supportedCameraModes.forEachIndexed { i, elem ->
-            binding.tabLayout.addTab(binding.tabLayout.newTab()
-                .setText(cameraModes[elem])
-                .setId(i))
+            binding.tabLayout.addTab(
+                    binding.tabLayout.newTab()
+                            .setText(cameraModes[elem])
+                            .setId(i)
+            )
         }
 
         binding.optionsBar.setOptionsBarListener(this)
-        binding.tabLayout.setOnTabSelectedListener(this)
+        binding.tabLayout.addOnTabSelectedListener(this)
         PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener(this)
+                .registerOnSharedPreferenceChangeListener(this)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -88,11 +91,13 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         binding.cameraSwapButton.setOnClickListener(this)
         binding.optionsBar.setOnClickListener(this)
         binding.galleryButton.setOnClickListener(this)
-        binding.previewView.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+        binding.previewView.setOnTouchListener(View.OnTouchListener { _, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    UIAnimator.fadeControls(fadeableViews, binding.previewView, binding.optionsBar,
-                        binding.galleryButton, binding.galleryButtonWrapper)
+                    UIAnimator.fadeControls(
+                            fadeableViews, binding.previewView, binding.optionsBar,
+                            binding.galleryButton, binding.galleryButtonWrapper
+                    )
                 }
             }
 
@@ -108,15 +113,18 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+            requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 activeCamera.startCamera(this)
             } else {
-                Toast.makeText(this, getString(R.string.permissions_not_granted),
-                        Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                        this, getString(R.string.permissions_not_granted),
+                        Toast.LENGTH_SHORT
+                ).show()
                 finish()
             }
         }
@@ -169,7 +177,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-                baseContext, it) == PackageManager.PERMISSION_GRANTED
+                baseContext, it
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onFlashToggled(flashMode: Int) {
@@ -246,7 +255,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         when (v) {
             binding.cameraCaptureButton -> capture()
             binding.cameraSwapButton -> swapCamera()
-            binding.galleryButton -> (binding.galleryButton as GalleryButton).onClick(v)
+            binding.galleryButton -> binding.galleryButton.onClick(v)
         }
     }
 
@@ -254,8 +263,8 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         const val TAG = "Snappier"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
         )
     }
 }

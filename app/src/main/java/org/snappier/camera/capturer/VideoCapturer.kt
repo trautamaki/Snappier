@@ -14,15 +14,15 @@ import org.snappier.camera.MainActivity
 import java.util.concurrent.Executor
 
 class VideoCapturer(
-    executor: Executor,
-    private val contentResolver: ContentResolver,
-    private val rotation: Int,
-    private val lensFacing: Int
+        executor: Executor,
+        private val contentResolver: ContentResolver,
+        private val rotation: Int,
+        private val lensFacing: Int
 ) :
-    Capturer(executor),
-    VideoCapture.OnVideoSavedCallback {
+        Capturer(executor),
+        VideoCapture.OnVideoSavedCallback {
 
-    lateinit var videoCapture: VideoCapture
+    private lateinit var videoCapture: VideoCapture
 
     var recording: Boolean = false
 

@@ -7,7 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 
 class UIAnimator {
     companion object {
-        private val viewsToFade : HashMap<View, Float> by lazy { hashMapOf()}
+        private val viewsToFade: HashMap<View, Float> by lazy { hashMapOf() }
         private var viewsFaded: Boolean = false
 
         /**
@@ -84,17 +84,17 @@ class UIAnimator {
 
             shutter.visibility = View.VISIBLE
             shutter.animate()
-                .setDuration(100)
-                .alpha(0f)
-                .setStartDelay(50)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        super.onAnimationEnd(animation)
-                        shutter.visibility = View.INVISIBLE
-                        shutter.alpha = 1f
-                    }
-                })
-                .start()
+                    .setDuration(100)
+                    .alpha(0f)
+                    .setStartDelay(50)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            super.onAnimationEnd(animation)
+                            shutter.visibility = View.INVISIBLE
+                            shutter.alpha = 1f
+                        }
+                    })
+                    .start()
         }
 
         /**
@@ -107,15 +107,15 @@ class UIAnimator {
          */
         fun animateHide(view: View, amount: Float, duration: Long, endVisibility: Int) {
             view.animate()
-                .setDuration(duration)
-                .alpha(amount)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        super.onAnimationEnd(animation)
-                        view.visibility = endVisibility
-                    }
-                })
-                .start()
+                    .setDuration(duration)
+                    .alpha(amount)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            super.onAnimationEnd(animation)
+                            view.visibility = endVisibility
+                        }
+                    })
+                    .start()
         }
 
         /**
@@ -127,15 +127,15 @@ class UIAnimator {
          */
         fun animateReveal(view: View, duration: Long, endVisibility: Int) {
             view.animate()
-                .setDuration(duration)
-                .alpha(1.0f)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        super.onAnimationEnd(animation)
-                        view.visibility = endVisibility
-                    }
-                })
-                .start()
+                    .setDuration(duration)
+                    .alpha(1.0f)
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            super.onAnimationEnd(animation)
+                            view.visibility = endVisibility
+                        }
+                    })
+                    .start()
         }
     }
 }

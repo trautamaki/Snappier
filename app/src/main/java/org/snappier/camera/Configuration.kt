@@ -19,11 +19,11 @@ class Configuration {
         const val IMAGE_RELATIVE_PATH = "DCIM/Camera"
 
         var supportedCameraModes: Array<Int> = arrayOf(
-            ID_PICTURE_CAMERA,
-            ID_VIDEO_CAMERA,
+                ID_PICTURE_CAMERA,
+                ID_VIDEO_CAMERA,
         )
 
-        fun getAspectInt(ratio: String) : Int {
+        fun getAspectInt(ratio: String): Int {
             return when (ratio) {
                 "4:3" -> {
                     0
@@ -37,7 +37,7 @@ class Configuration {
             }
         }
 
-        fun getAspectString(ratio: Int) : String {
+        fun getAspectString(ratio: Int): String {
             return when (ratio) {
                 0 -> {
                     "3:4"

@@ -18,7 +18,7 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
     ImageView(context, attrs),
     View.OnClickListener {
 
-    var previousFile: Uri? = null
+    private var previousFile: Uri? = null
 
     init {
         setOnClickListener(this)
@@ -43,7 +43,8 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
 
         if (uri != null) {
             val thumbnail = context.contentResolver.loadThumbnail(
-                uri, Size(100,100), null)
+                uri, Size(100, 100), null
+            )
 
             setImageBitmap(thumbnail)
             saveLastFile()

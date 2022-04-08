@@ -2,9 +2,7 @@ package org.snappier.camera.capturer
 
 import android.net.Uri
 import androidx.camera.core.UseCase
-import androidx.core.content.ContextCompat
 import org.snappier.camera.Configuration
-import org.snappier.camera.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
@@ -20,7 +18,7 @@ abstract class Capturer(protected val executor: Executor) {
 
     protected fun createFileName(extension: String): String {
         return SimpleDateFormat(Configuration.FILE_NAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis()) + extension
+                .format(System.currentTimeMillis()) + extension
     }
 
     abstract fun getCapture(): UseCase

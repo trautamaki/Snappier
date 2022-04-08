@@ -37,7 +37,7 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
         }
 
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
-            handler.postDelayed(Runnable { zoomInProgress = false }, 300)
+            handler.postDelayed({ zoomInProgress = false }, 300)
             super.onScaleEnd(detector)
         }
     }
@@ -51,11 +51,11 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
     private fun build() {
         setAspectRatio()
         preview = Preview.Builder()
-            .setTargetAspectRatio(Configuration.ASPECT_RATIO)
-            .build()
-            .also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
-            }
+                .setTargetAspectRatio(Configuration.ASPECT_RATIO)
+                .build()
+                .also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
+                }
     }
 
     fun onTouch(motionEvent: MotionEvent): Boolean {
@@ -120,24 +120,24 @@ class ViewFinder(private val activity: MainActivity, private val previewView: Pr
 
         // Animate fade out
         focusRing.animate()
-            .setStartDelay(350)
-            .setDuration(350)
-            .alpha(0f)
-            .setListener(object : AnimatorListenerAdapter() {
-                var isCancelled = false
+                .setStartDelay(350)
+                .setDuration(350)
+                .alpha(0f)
+                .setListener(object : AnimatorListenerAdapter() {
+                    var isCancelled = false
 
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    if (!isCancelled) {
-                        focusRing.visibility = View.INVISIBLE
+                    override fun onAnimationEnd(animation: Animator) {
+                        super.onAnimationEnd(animation)
+                        if (!isCancelled) {
+                            focusRing.visibility = View.INVISIBLE
+                        }
                     }
-                }
 
-                override fun onAnimationCancel(animation: Animator?) {
-                    super.onAnimationCancel(animation)
-                    isCancelled = true
-                }
-            })
-            .start()
+                    override fun onAnimationCancel(animation: Animator?) {
+                        super.onAnimationCancel(animation)
+                        isCancelled = true
+                    }
+                })
+                .start()
     }
 }

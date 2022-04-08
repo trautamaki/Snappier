@@ -1,22 +1,19 @@
 package org.snappier.camera.ui
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import org.snappier.camera.R
-
 import org.snappier.camera.SettingsActivity
-
-import android.content.Intent
 import org.snappier.camera.databinding.OptionsBarBinding
 
 class OptionsBar @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyle: Int = 0,
-        defStyleRes: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0,
+    defStyleRes: Int = 0
 ) : LinearLayout(context, attrs, defStyle, defStyleRes), View.OnClickListener {
 
     interface IOptionsBar {
@@ -25,8 +22,7 @@ class OptionsBar @JvmOverloads constructor(
         fun onAspectRatioChanged(aspectRatio: Int)
     }
 
-    var listener: IOptionsBar? = null
-
+    private var listener: IOptionsBar? = null
     private var binding: OptionsBarBinding =
         OptionsBarBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -50,14 +46,18 @@ class OptionsBar @JvmOverloads constructor(
 
     override fun onClick(v: View?) {
         listener?.onOptionsBarClick()
-        if (v == binding.buttonFlashToggle) {
-            binding.buttonFlashToggle.toggleMode()
-            listener?.onFlashToggled(binding.buttonFlashToggle.getFlashMode())
-        } else if (v == binding.buttonFlashToggle) {
-            context.startActivity(Intent(context, SettingsActivity::class.java))
-        } else if (v == binding.buttonAspectRatio) {
-            binding.buttonAspectRatio.toggleAspectRatio()
-            listener?.onAspectRatioChanged(binding.buttonAspectRatio.getAspectRatio())
+        when (v) {
+            binding.buttonFlashToggle -> {
+                binding.buttonFlashToggle.toggleMode()
+                listener?.onFlashToggled(binding.buttonFlashToggle.getFlashMode())
+            }
+            binding.buttonFlashToggle -> {
+                context.startActivity(Intent(context, SettingsActivity::class.java))
+            }
+            binding.buttonAspectRatio -> {
+                binding.buttonAspectRatio.toggleAspectRatio()
+                listener?.onAspectRatioChanged(binding.buttonAspectRatio.getAspectRatio())
+            }
         }
     }
 

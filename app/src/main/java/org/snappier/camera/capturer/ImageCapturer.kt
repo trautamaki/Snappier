@@ -13,13 +13,13 @@ import org.snappier.camera.MainActivity
 import java.util.concurrent.Executor
 
 class ImageCapturer(
-    executor: Executor,
-    private val contentResolver: ContentResolver,
-    private val captureMode: Int
+        executor: Executor,
+        private val contentResolver: ContentResolver,
+        private val captureMode: Int
 ) :
-    Capturer(executor), ImageCapture.OnImageSavedCallback {
+        Capturer(executor), ImageCapture.OnImageSavedCallback {
 
-    lateinit var imageCapture: ImageCapture
+    private lateinit var imageCapture: ImageCapture
 
     init {
         build()
@@ -27,9 +27,9 @@ class ImageCapturer(
 
     private fun build() {
         imageCapture = ImageCapture.Builder()
-            .setTargetAspectRatio(Configuration.ASPECT_RATIO)
-            .setCaptureMode(captureMode)
-            .build()
+                .setTargetAspectRatio(Configuration.ASPECT_RATIO)
+                .setCaptureMode(captureMode)
+                .build()
     }
 
     fun takePhoto() {

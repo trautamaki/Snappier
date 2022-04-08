@@ -14,13 +14,12 @@ class VideoCamera(private val activity: MainActivity) : Camera(activity) {
     var recording: Boolean = false
         get() = (capturer as VideoCapturer).recording
 
-
     override fun buildCapturer(): Capturer {
         return VideoCapturer(
-            ContextCompat.getMainExecutor(activity),
-            activity.contentResolver,
-            activity.binding.previewView.display.rotation,
-            lensFacingVideo
+                ContextCompat.getMainExecutor(activity),
+                activity.contentResolver,
+                activity.binding.previewView.display.rotation,
+                lensFacingVideo
         )
     }
 
