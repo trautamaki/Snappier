@@ -35,6 +35,7 @@
         style="@style/Theme.NewSnap.CaptureButton"/>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/gallery_button_wrapper"
         android:elevation="1dp"
         android:layout_width="60dp"
         android:layout_height="60dp"

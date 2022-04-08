@@ -18,15 +18,15 @@ import androidx.camera.core.ImageCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import org.snappier.camera.camera.PhotoCamera
-import org.snappier.camera.camera.VideoCamera
-import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
+import org.snappier.camera.camera.PhotoCamera
+import org.snappier.camera.camera.VideoCamera
+import org.snappier.camera.capturer.Capturer
+import org.snappier.camera.ui.OptionsBar.IOptionsBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.constraintlayout.widget.ConstraintLayout
-import org.snappier.camera.capturer.Capturer
 
 class MainActivity : AppCompatActivity(), IOptionsBar,
     SharedPreferences.OnSharedPreferenceChangeListener, TabLayout.OnTabSelectedListener,
@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
     private lateinit var photoCamera: PhotoCamera
     private lateinit var videoCamera: VideoCamera
     private lateinit var activeCamera: org.snappier.camera.camera.Camera
+    private val tabTouchables by lazy { tab_layout.touchables }
 
     private var cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -129,9 +130,17 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             if (videoCamera.recording) {
                 videoCamera.stopVideo()
                 camera_capture_button.recording = false
+                tabTouchables?.forEach { it.isEnabled = true }
+                animateReveal(camera_swap_button, 100, View.VISIBLE)
+                animateReveal(gallery_button_wrapper, 100, View.VISIBLE)
+                animateReveal(gallery_button, 100, View.VISIBLE)
             } else {
                 videoCamera.startVideo()
                 camera_capture_button.recording = true
+                tabTouchables?.forEach { it.isEnabled = false }
+                animateHide(camera_swap_button, 0f, 100, View.INVISIBLE)
+                animateHide(gallery_button_wrapper, 0f, 100, View.INVISIBLE)
+                animateHide(gallery_button, 0f, 100, View.INVISIBLE)
             }
         }
     }
@@ -172,10 +181,7 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
 
         for ((key, value) in viewsToFade) {
-            key.animate()
-                .setDuration(350)
-                .alpha(value)
-                .start()
+            animateHide(key, value, 350, View.VISIBLE)
         }
 
         viewsFaded = true
@@ -187,13 +193,36 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
 
         for ((key, _) in viewsToFade) {
-            key.animate()
-                .setDuration(250)
-                .alpha(1.0f)
-                .start()
+            animateReveal(key, 100, View.VISIBLE)
         }
 
         viewsFaded = false
+    }
+
+    private fun animateHide(view: View, amount: Float, duration: Long, endVisibility: Int) {
+        view.animate()
+            .setDuration(duration)
+            .alpha(amount)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    view.visibility = endVisibility
+                }
+            })
+            .start()
+    }
+
+    private fun animateReveal(view: View, duration: Long, endVisibility: Int) {
+        view.animate()
+            .setDuration(duration)
+            .alpha(1.0f)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    view.visibility = endVisibility
+                }
+            })
+            .start()
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
