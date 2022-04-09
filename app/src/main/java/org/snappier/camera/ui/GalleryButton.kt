@@ -26,15 +26,14 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val savedUri = prefs.getString(Configuration.KEY_LAST_FILE_URI, "")
         if (savedUri != "") {
-            previousFile = Uri.parse(savedUri)
-            setNewFile(previousFile)
-        } else {
-            val packageManager = context.packageManager
-            val galleryPackage = getGalleryPackage(packageManager)
-            if (galleryPackage.isNotEmpty()) {
-                val icon: Drawable = packageManager.getApplicationIcon(galleryPackage)
-                setImageDrawable(icon)
+            try {
+                previousFile = Uri.parse(savedUri)
+                setNewFile(previousFile)
+            } catch (e: Exception) {
+                setImageToGalleryIcon()
             }
+        } else {
+            setImageToGalleryIcon()
         }
     }
 
@@ -48,6 +47,15 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
 
             setImageBitmap(thumbnail)
             saveLastFile()
+        }
+    }
+
+    private fun setImageToGalleryIcon() {
+        val packageManager = context.packageManager
+        val galleryPackage = getGalleryPackage(packageManager)
+        if (galleryPackage.isNotEmpty()) {
+            val icon: Drawable = packageManager.getApplicationIcon(galleryPackage)
+            setImageDrawable(icon)
         }
     }
 
