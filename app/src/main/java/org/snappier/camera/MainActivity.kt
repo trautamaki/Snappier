@@ -221,30 +221,36 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             Configuration.ID_PICTURE_CAMERA -> {
                 Log.d(TAG, "Switch to photo mode")
                 binding.cameraCaptureButton.videoMode = false
+                binding.optionsBar.getFlashButton().setImageIds(R.array.flash_modes_picture)
                 photoCamera
             }
             Configuration.ID_VIDEO_CAMERA -> {
                 Log.d(TAG, "Switch to video mode")
                 binding.cameraCaptureButton.videoMode = true
+                binding.optionsBar.getFlashButton().setImageIds(R.array.flash_modes_video)
                 videoCamera
             }
             Configuration.ID_BOKEH -> {
                 Log.d(TAG, "Switch to bokeh mode")
                 binding.cameraCaptureButton.videoMode = false
+                binding.optionsBar.getFlashButton().setImageIds(R.array.flash_modes_picture)
                 videoCamera
             }
             Configuration.ID_NIGHT -> {
                 Log.d(TAG, "Switch to night mode")
                 binding.cameraCaptureButton.videoMode = false
+                binding.optionsBar.getFlashButton().setImageIds(R.array.flash_modes_picture)
                 videoCamera
             }
             else -> {
                 Log.e(TAG, "Unknown tab. Using photo camera.")
                 binding.cameraCaptureButton.videoMode = false
+                binding.optionsBar.getFlashButton().setImageIds(R.array.flash_modes_picture)
                 photoCamera
             }
         }
 
+        binding.optionsBar.getFlashButton().setState(0)
         binding.cameraCaptureButton.refreshDrawableState()
         activeCamera.startCamera(this)
     }

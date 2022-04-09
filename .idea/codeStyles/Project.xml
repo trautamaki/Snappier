@@ -92,6 +92,9 @@
         </value>
       </option>
     </JavaCodeStyleSettings>
+    <JetCodeStyleSettings>
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+    </JetCodeStyleSettings>
     <ADDITIONAL_INDENT_OPTIONS fileType="java">
       <option name="TAB_SIZE" value="8" />
     </ADDITIONAL_INDENT_OPTIONS>
@@ -306,6 +309,9 @@
           </section>
         </rules>
       </arrangement>
+    </codeStyleSettings>
+    <codeStyleSettings language="kotlin">
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </codeStyleSettings>
   </code_scheme>
 </component>

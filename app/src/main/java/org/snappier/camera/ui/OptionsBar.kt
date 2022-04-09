@@ -44,19 +44,28 @@ class OptionsBar @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Get the flash toggle button.
+     *
+     * @return the flash button.
+     */
+    fun getFlashButton(): MultiStateButton {
+        return binding.buttonFlashToggle
+    }
+
     override fun onClick(v: View?) {
         listener?.onOptionsBarClick()
         when (v) {
             binding.buttonFlashToggle -> {
-                binding.buttonFlashToggle.toggleMode()
-                listener?.onFlashToggled(binding.buttonFlashToggle.getFlashMode())
+                binding.buttonFlashToggle.onClick(v)
+                listener?.onFlashToggled(binding.buttonFlashToggle.buttonState)
             }
             binding.buttonFlashToggle -> {
                 context.startActivity(Intent(context, SettingsActivity::class.java))
             }
             binding.buttonAspectRatio -> {
-                binding.buttonAspectRatio.toggleAspectRatio()
-                listener?.onAspectRatioChanged(binding.buttonAspectRatio.getAspectRatio())
+                binding.buttonAspectRatio.onClick(v)
+                listener?.onAspectRatioChanged(binding.buttonAspectRatio.buttonState)
             }
         }
     }

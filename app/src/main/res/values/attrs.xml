@@ -4,4 +4,7 @@
         <attr name="recording" format="boolean" />
         <attr name="video_mode" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="MultiStateButton">
+        <attr name="imageIds" format="reference" />
+    </declare-styleable>
 </resources>

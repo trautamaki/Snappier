@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/options_bar_height"
     android:padding="@dimen/options_bar_padding"
     android:gravity="center_horizontal"
     android:background="@color/activity_bg">
 
-    <org.snappier.camera.ui.FlashButton
+    <org.snappier.camera.ui.MultiStateButton
         android:id="@+id/button_flash_toggle"
         android:src="@drawable/ic_flash_off"
+        app:imageIds="@array/flash_modes_picture"
         style="@style/Theme.Snappier.ImageButton"/>
 
     <ImageButton
@@ -17,8 +19,9 @@
         android:src="@drawable/ic_settings"
         style="@style/Theme.Snappier.ImageButton"/>
 
-    <org.snappier.camera.ui.AspectButton
+    <org.snappier.camera.ui.MultiStateButton
         android:id="@+id/button_aspect_ratio"
         android:src="@drawable/ic_3_4"
+        app:imageIds="@array/aspect_modes"
         style="@style/Theme.Snappier.ImageButton"/>
 </LinearLayout>

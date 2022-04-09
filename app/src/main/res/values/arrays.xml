@@ -25,4 +25,20 @@
         <item>@string/night</item>
         <item>@string/bokeh</item>
     </string-array>
+
+    <integer-array name="flash_modes_picture">
+        <item>@drawable/ic_flash_off</item>
+        <item>@drawable/ic_flash_on</item>
+        <item>@drawable/ic_flash_auto</item>
+    </integer-array>
+
+    <integer-array name="flash_modes_video">
+        <item>@drawable/ic_flash_off</item>
+        <item>@drawable/ic_flash_on</item>
+    </integer-array>
+
+    <integer-array name="aspect_modes">
+        <item>@drawable/ic_3_4</item>
+        <item>@drawable/ic_16_9</item>
+    </integer-array>
 </resources>
