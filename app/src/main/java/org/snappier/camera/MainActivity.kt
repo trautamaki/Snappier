@@ -112,7 +112,14 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
             return@OnTouchListener true
         })
 
+        initSavedConfiguration()
+
         orientationManager.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveConfiguration()
     }
 
     override fun onDestroy() {
@@ -182,6 +189,23 @@ class MainActivity : AppCompatActivity(), IOptionsBar,
         }
 
         activeCamera.startCamera(this)
+    }
+
+    private fun saveConfiguration() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(baseContext)
+        val editor = prefs.edit()
+        editor.putInt(Configuration.KEY_ASPECT_RATIO, Configuration.ASPECT_RATIO)
+        editor.apply()
+    }
+
+    private fun initSavedConfiguration() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(baseContext)
+        val savedAspectRatio = prefs.getInt(
+                Configuration.KEY_ASPECT_RATIO,
+                Configuration.DEFAULT_ASPECT_RATIO
+        )
+        onAspectRatioChanged(savedAspectRatio)
+        binding.optionsBar.getAspectRatioButton().setState(savedAspectRatio)
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {

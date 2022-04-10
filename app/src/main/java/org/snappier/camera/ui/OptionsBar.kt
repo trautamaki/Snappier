@@ -53,6 +53,15 @@ class OptionsBar @JvmOverloads constructor(
         return binding.buttonFlashToggle
     }
 
+    /**
+     * Get the aspect ratio toggle button.
+     *
+     * @return the aspect ratio button.
+     */
+    fun getAspectRatioButton(): MultiStateButton {
+        return binding.buttonAspectRatio
+    }
+
     override fun onClick(v: View?) {
         listener?.onOptionsBarClick()
         when (v) {
