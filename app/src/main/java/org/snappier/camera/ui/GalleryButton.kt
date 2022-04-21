@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.util.Size
 import android.view.View
 import android.widget.ImageView
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import org.snappier.camera.Configuration
 
@@ -80,7 +81,7 @@ class GalleryButton(context: Context, attrs: AttributeSet) :
     override fun onClick(v: View?) {
         val intent = Intent()
 
-        if (previousFile != null) {
+        if (previousFile != null && DocumentFile.fromSingleUri(context, previousFile!!)!!.exists()) {
             intent.action = Intent.ACTION_VIEW
             intent.setDataAndType(previousFile, "image/*")
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
